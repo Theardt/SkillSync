@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class RegisterScreen extends StatelessWidget {
+  const RegisterScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +11,7 @@ class LoginScreen extends StatelessWidget {
       body: Center(
         child: SingleChildScrollView(
           child: Container(
-            width: 400,
+            width: 420,
             padding: const EdgeInsets.all(32),
 
             decoration: BoxDecoration(
@@ -30,9 +30,9 @@ class LoginScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
 
-                /// LOGO
+                /// ICON
                 const Icon(
-                  Icons.school_rounded,
+                  Icons.person_add_alt_1_rounded,
                   size: 80,
                   color: Colors.blue,
                 ),
@@ -41,10 +41,10 @@ class LoginScreen extends StatelessWidget {
 
                 /// TITLE
                 const Text(
-                  "SkillSync",
+                  "Create Account",
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 34,
+                    fontSize: 30,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -52,15 +52,39 @@ class LoginScreen extends StatelessWidget {
                 const SizedBox(height: 10),
 
                 const Text(
-                  "Modern Gamified E-Learning Platform",
-                  textAlign: TextAlign.center,
+                  "Join SkillSync and start learning",
                   style: TextStyle(
                     color: Colors.white70,
                     fontSize: 14,
                   ),
                 ),
 
-                const SizedBox(height: 40),
+                const SizedBox(height: 35),
+
+                /// FULL NAME
+                TextField(
+                  style: const TextStyle(color: Colors.white),
+
+                  decoration: InputDecoration(
+                    hintText: "Full Name",
+                    hintStyle: const TextStyle(color: Colors.white54),
+
+                    prefixIcon: const Icon(
+                      Icons.person,
+                      color: Colors.blue,
+                    ),
+
+                    filled: true,
+                    fillColor: const Color(0xFF1A2238),
+
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
 
                 /// EMAIL
                 TextField(
@@ -111,26 +135,9 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: 15),
+                const SizedBox(height: 30),
 
-                /// FORGOT PASSWORD
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () {},
-
-                    child: const Text(
-                      "Forgot Password?",
-                      style: TextStyle(
-                        color: Colors.blue,
-                      ),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 10),
-
-                /// LOGIN BUTTON
+                /// REGISTER BUTTON
                 SizedBox(
                   width: double.infinity,
                   height: 55,
@@ -145,11 +152,10 @@ class LoginScreen extends StatelessWidget {
                       ),
                     ),
 
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/dashboard');
-                    },
+                    onPressed: () {},
+
                     child: const Text(
-                      "Login",
+                      "Create Account",
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -160,13 +166,13 @@ class LoginScreen extends StatelessWidget {
 
                 const SizedBox(height: 25),
 
-                /// REGISTER
+                /// LOGIN LINK
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
 
                     const Text(
-                      "Don’t have an account?",
+                      "Already have an account?",
                       style: TextStyle(
                         color: Colors.white70,
                       ),
@@ -174,10 +180,11 @@ class LoginScreen extends StatelessWidget {
 
                     TextButton(
                       onPressed: () {
-                        Navigator.pushNamed(context, '/register');
+                        Navigator.pushNamed(context, '/login');
                       },
+
                       child: const Text(
-                        "Register",
+                        "Login",
                         style: TextStyle(
                           color: Colors.blue,
                           fontWeight: FontWeight.bold,
