@@ -1,7 +1,45 @@
 import 'package:flutter/material.dart';
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen>
+    with SingleTickerProviderStateMixin {
+
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    );
+
+    _animation = Tween<double>(
+      begin: 0.0,
+      end: 0.78,
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeInOut,
+      ),
+    );
+
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,12 +58,14 @@ class DashboardScreen extends StatelessWidget {
 
                 /// HEADER
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment:
+                      MainAxisAlignment.spaceBetween,
 
                   children: [
 
                     Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment:
+                          CrossAxisAlignment.start,
 
                       children: const [
 
@@ -77,15 +117,17 @@ class DashboardScreen extends StatelessWidget {
                       ],
                     ),
 
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius:
+                        BorderRadius.circular(20),
                   ),
 
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment:
+                        CrossAxisAlignment.start,
 
-                    children: const [
+                    children: [
 
-                      Text(
+                      const Text(
                         "Current XP",
                         style: TextStyle(
                           color: Colors.white70,
@@ -93,9 +135,9 @@ class DashboardScreen extends StatelessWidget {
                         ),
                       ),
 
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
 
-                      Text(
+                      const Text(
                         "2,450 XP",
                         style: TextStyle(
                           color: Colors.white,
@@ -104,9 +146,9 @@ class DashboardScreen extends StatelessWidget {
                         ),
                       ),
 
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
 
-                      Text(
+                      const Text(
                         "Level 12 Learner 🚀",
                         style: TextStyle(
                           color: Colors.white,
@@ -114,24 +156,30 @@ class DashboardScreen extends StatelessWidget {
                         ),
                       ),
 
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
 
                       ClipRRect(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(20),
-                        ),
+                        borderRadius:
+                            BorderRadius.circular(20),
 
-                        child: LinearProgressIndicator(
-                          value: 0.78,
-                          minHeight: 12,
-                          backgroundColor: Colors.white24,
-                          color: Colors.white,
+                        child: AnimatedBuilder(
+                          animation: _animation,
+
+                          builder: (context, child) {
+                            return LinearProgressIndicator(
+                              value: _animation.value,
+                              minHeight: 12,
+                              backgroundColor:
+                                  Colors.white24,
+                              color: Colors.white,
+                            );
+                          },
                         ),
                       ),
 
-                      SizedBox(height: 12),
+                      const SizedBox(height: 12),
 
-                      Text(
+                      const Text(
                         "780 XP until Level 13",
                         style: TextStyle(
                           color: Colors.white70,
@@ -162,11 +210,14 @@ class DashboardScreen extends StatelessWidget {
 
                     Expanded(
                       child: Container(
-                        padding: const EdgeInsets.all(20),
+                        padding:
+                            const EdgeInsets.all(20),
 
                         decoration: BoxDecoration(
-                          color: const Color(0xFF11162A),
-                          borderRadius: BorderRadius.circular(18),
+                          color:
+                              const Color(0xFF11162A),
+                          borderRadius:
+                              BorderRadius.circular(18),
                         ),
 
                         child: Column(
@@ -185,7 +236,8 @@ class DashboardScreen extends StatelessWidget {
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 28,
-                                fontWeight: FontWeight.bold,
+                                fontWeight:
+                                    FontWeight.bold,
                               ),
                             ),
 
@@ -206,11 +258,14 @@ class DashboardScreen extends StatelessWidget {
 
                     Expanded(
                       child: Container(
-                        padding: const EdgeInsets.all(20),
+                        padding:
+                            const EdgeInsets.all(20),
 
                         decoration: BoxDecoration(
-                          color: const Color(0xFF11162A),
-                          borderRadius: BorderRadius.circular(18),
+                          color:
+                              const Color(0xFF11162A),
+                          borderRadius:
+                              BorderRadius.circular(18),
                         ),
 
                         child: Column(
@@ -229,7 +284,8 @@ class DashboardScreen extends StatelessWidget {
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 28,
-                                fontWeight: FontWeight.bold,
+                                fontWeight:
+                                    FontWeight.bold,
                               ),
                             ),
 
@@ -257,7 +313,8 @@ class DashboardScreen extends StatelessWidget {
 
                   decoration: BoxDecoration(
                     color: const Color(0xFF11162A),
-                    borderRadius: BorderRadius.circular(18),
+                    borderRadius:
+                        BorderRadius.circular(18),
                   ),
 
                   child: Row(
@@ -272,7 +329,8 @@ class DashboardScreen extends StatelessWidget {
                       SizedBox(width: 20),
 
                       Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment:
+                            CrossAxisAlignment.start,
 
                         children: [
 
@@ -281,7 +339,8 @@ class DashboardScreen extends StatelessWidget {
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                              fontWeight:
+                                  FontWeight.bold,
                             ),
                           ),
 
@@ -313,247 +372,80 @@ class DashboardScreen extends StatelessWidget {
 
                 const SizedBox(height: 20),
 
-                /// COURSE CARD 1
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(20),
-
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF11162A),
-                    borderRadius: BorderRadius.circular(18),
-                  ),
-
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-
-                    children: [
-
-                      Row(
-                        children: [
-
-                          Container(
-                            padding: const EdgeInsets.all(12),
-
-                            decoration: BoxDecoration(
-                              color: Colors.blue.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-
-                            child: const Icon(
-                              Icons.code,
-                              color: Colors.blue,
-                              size: 32,
-                            ),
-                          ),
-
-                          const SizedBox(width: 15),
-
-                          const Expanded(
-                            child: Column(
-                              crossAxisAlignment:
-                                  CrossAxisAlignment.start,
-
-                              children: [
-
-                                Text(
-                                  "Flutter Development",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-
-                                SizedBox(height: 5),
-
-                                Text(
-                                  "Build modern mobile applications",
-                                  style: TextStyle(
-                                    color: Colors.white70,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-
-                        child: const LinearProgressIndicator(
-                          value: 0.7,
-                          minHeight: 10,
-                          backgroundColor: Colors.white12,
-                          color: Colors.blue,
-                        ),
-                      ),
-
-                      const SizedBox(height: 10),
-
-                      const Text(
-                        "70% Completed",
-                        style: TextStyle(
-                          color: Colors.white70,
-                        ),
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      SizedBox(
-                        width: double.infinity,
-                        height: 50,
-
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue,
-                            foregroundColor: Colors.white,
-
-                            shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(12),
-                            ),
-                          ),
-
-                          onPressed: () {},
-
-                          child: const Text(
-                            "Continue Learning",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                buildCourseCard(
+                  title: "Flutter Development",
+                  subtitle:
+                      "Build modern mobile applications",
+                  progress: 0.7,
+                  progressText: "70% Completed",
+                  icon: Icons.code,
+                  color: Colors.blue,
                 ),
 
                 const SizedBox(height: 20),
 
-                /// COURSE CARD 2
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(20),
-
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF11162A),
-                    borderRadius: BorderRadius.circular(18),
-                  ),
-
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-
-                    children: [
-
-                      Row(
-                        children: [
-
-                          Container(
-                            padding: const EdgeInsets.all(12),
-
-                            decoration: BoxDecoration(
-                              color: Colors.orange.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-
-                            child: const Icon(
-                              Icons.security,
-                              color: Colors.orange,
-                              size: 32,
-                            ),
-                          ),
-
-                          const SizedBox(width: 15),
-
-                          const Expanded(
-                            child: Column(
-                              crossAxisAlignment:
-                                  CrossAxisAlignment.start,
-
-                              children: [
-
-                                Text(
-                                  "Cyber Security Basics",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-
-                                SizedBox(height: 5),
-
-                                Text(
-                                  "Learn networking and cyber defense",
-                                  style: TextStyle(
-                                    color: Colors.white70,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-
-                        child: const LinearProgressIndicator(
-                          value: 0.45,
-                          minHeight: 10,
-                          backgroundColor: Colors.white12,
-                          color: Colors.orange,
-                        ),
-                      ),
-
-                      const SizedBox(height: 10),
-
-                      const Text(
-                        "45% Completed",
-                        style: TextStyle(
-                          color: Colors.white70,
-                        ),
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      SizedBox(
-                        width: double.infinity,
-                        height: 50,
-
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.orange,
-                            foregroundColor: Colors.white,
-
-                            shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(12),
-                            ),
-                          ),
-
-                          onPressed: () {},
-
-                          child: const Text(
-                            "Continue Learning",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                buildCourseCard(
+                  title: "Cyber Security Basics",
+                  subtitle:
+                      "Learn networking and cyber defense",
+                  progress: 0.45,
+                  progressText: "45% Completed",
+                  icon: Icons.security,
+                  color: Colors.orange,
                 ),
 
                 const SizedBox(height: 40),
+                /// RECENT ACTIVITY
+const Text(
+  "Recent Activity",
+  style: TextStyle(
+    color: Colors.white,
+    fontSize: 22,
+    fontWeight: FontWeight.bold,
+  ),
+),
+
+const SizedBox(height: 20),
+
+buildActivityCard(
+  icon: Icons.check_circle,
+  iconColor: Colors.green,
+  title: "Completed Flutter Quiz",
+  subtitle: "You scored 92% on Widgets Basics",
+  time: "2 hours ago",
+),
+
+const SizedBox(height: 15),
+
+buildActivityCard(
+  icon: Icons.emoji_events,
+  iconColor: Colors.orange,
+  title: "New Badge Earned",
+  subtitle: "Consistency Master Badge unlocked",
+  time: "Yesterday",
+),
+
+const SizedBox(height: 15),
+
+buildActivityCard(
+  icon: Icons.local_fire_department,
+  iconColor: Colors.red,
+  title: "Daily Streak Updated",
+  subtitle: "7 day learning streak maintained",
+  time: "Today",
+),
+
+const SizedBox(height: 15),
+
+buildActivityCard(
+  icon: Icons.play_circle_fill,
+  iconColor: Colors.blue,
+  title: "Lesson Completed",
+  subtitle: "Finished State Management module",
+  time: "3 days ago",
+),
+
+const SizedBox(height: 40),
               ],
             ),
           ),
@@ -561,4 +453,213 @@ class DashboardScreen extends StatelessWidget {
       ),
     );
   }
+
+  Widget buildCourseCard({
+    required String title,
+    required String subtitle,
+    required double progress,
+    required String progressText,
+    required IconData icon,
+    required Color color,
+  }) {
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+
+      decoration: BoxDecoration(
+        color: const Color(0xFF11162A),
+        borderRadius: BorderRadius.circular(18),
+      ),
+
+      child: Column(
+        crossAxisAlignment:
+            CrossAxisAlignment.start,
+
+        children: [
+
+          Row(
+            children: [
+
+              Container(
+                padding: const EdgeInsets.all(12),
+
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.2),
+                  borderRadius:
+                      BorderRadius.circular(14),
+                ),
+
+                child: Icon(
+                  icon,
+                  color: color,
+                  size: 32,
+                ),
+              ),
+
+              const SizedBox(width: 15),
+
+              Expanded(
+                child: Column(
+                  crossAxisAlignment:
+                      CrossAxisAlignment.start,
+
+                  children: [
+
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight:
+                            FontWeight.bold,
+                      ),
+                    ),
+
+                    const SizedBox(height: 5),
+
+                    Text(
+                      subtitle,
+                      style: const TextStyle(
+                        color: Colors.white70,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 20),
+
+          ClipRRect(
+            borderRadius:
+                BorderRadius.circular(20),
+
+            child: LinearProgressIndicator(
+              value: progress,
+              minHeight: 10,
+              backgroundColor: Colors.white12,
+              color: color,
+            ),
+          ),
+
+          const SizedBox(height: 10),
+
+          Text(
+            progressText,
+            style: const TextStyle(
+              color: Colors.white70,
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          SizedBox(
+            width: double.infinity,
+            height: 50,
+
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: color,
+                foregroundColor: Colors.white,
+
+                shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(12),
+                ),
+              ),
+
+              onPressed: () {},
+
+              child: const Text(
+                "Continue Learning",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  Widget buildActivityCard({
+  required IconData icon,
+  required Color iconColor,
+  required String title,
+  required String subtitle,
+  required String time,
+}) {
+
+  return Container(
+    width: double.infinity,
+    padding: const EdgeInsets.all(18),
+
+    decoration: BoxDecoration(
+      color: const Color(0xFF11162A),
+      borderRadius: BorderRadius.circular(18),
+    ),
+
+    child: Row(
+      children: [
+
+        Container(
+          padding: const EdgeInsets.all(14),
+
+          decoration: BoxDecoration(
+            color: iconColor.withOpacity(0.15),
+            borderRadius: BorderRadius.circular(14),
+          ),
+
+          child: Icon(
+            icon,
+            color: iconColor,
+            size: 30,
+          ),
+        ),
+
+        const SizedBox(width: 18),
+
+        Expanded(
+          child: Column(
+            crossAxisAlignment:
+                CrossAxisAlignment.start,
+
+            children: [
+
+              Text(
+                title,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              const SizedBox(height: 6),
+
+              Text(
+                subtitle,
+                style: const TextStyle(
+                  color: Colors.white70,
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        Text(
+          time,
+          style: const TextStyle(
+            color: Colors.white38,
+            fontSize: 12,
+          ),
+        ),
+      ],
+    ),
+  );
+}
 }
