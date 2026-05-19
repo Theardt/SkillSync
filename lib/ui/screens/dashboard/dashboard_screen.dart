@@ -395,57 +395,118 @@ class _DashboardScreenState extends State<DashboardScreen>
                 ),
 
                 const SizedBox(height: 40),
+
                 /// RECENT ACTIVITY
-const Text(
-  "Recent Activity",
-  style: TextStyle(
-    color: Colors.white,
-    fontSize: 22,
-    fontWeight: FontWeight.bold,
-  ),
-),
+                const Text(
+                  "Recent Activity",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
 
-const SizedBox(height: 20),
+                const SizedBox(height: 20),
 
-buildActivityCard(
-  icon: Icons.check_circle,
-  iconColor: Colors.green,
-  title: "Completed Flutter Quiz",
-  subtitle: "You scored 92% on Widgets Basics",
-  time: "2 hours ago",
-),
+                buildActivityCard(
+                  icon: Icons.check_circle,
+                  iconColor: Colors.green,
+                  title: "Completed Flutter Quiz",
+                  subtitle: "You scored 92% on Widgets Basics",
+                  time: "2 hours ago",
+                ),
 
-const SizedBox(height: 15),
+                const SizedBox(height: 15),
 
-buildActivityCard(
-  icon: Icons.emoji_events,
-  iconColor: Colors.orange,
-  title: "New Badge Earned",
-  subtitle: "Consistency Master Badge unlocked",
-  time: "Yesterday",
-),
+                buildActivityCard(
+                  icon: Icons.emoji_events,
+                  iconColor: Colors.orange,
+                  title: "New Badge Earned",
+                  subtitle: "Consistency Master Badge unlocked",
+                  time: "Yesterday",
+                ),
 
-const SizedBox(height: 15),
+                const SizedBox(height: 15),
 
-buildActivityCard(
-  icon: Icons.local_fire_department,
-  iconColor: Colors.red,
-  title: "Daily Streak Updated",
-  subtitle: "7 day learning streak maintained",
-  time: "Today",
-),
+                buildActivityCard(
+                  icon: Icons.local_fire_department,
+                  iconColor: Colors.red,
+                  title: "Daily Streak Updated",
+                  subtitle: "7 day learning streak maintained",
+                  time: "Today",
+                ),
 
-const SizedBox(height: 15),
+                const SizedBox(height: 15),
 
-buildActivityCard(
-  icon: Icons.play_circle_fill,
-  iconColor: Colors.blue,
-  title: "Lesson Completed",
-  subtitle: "Finished State Management module",
-  time: "3 days ago",
-),
+                buildActivityCard(
+                  icon: Icons.play_circle_fill,
+                  iconColor: Colors.blue,
+                  title: "Lesson Completed",
+                  subtitle: "Finished State Management module",
+                  time: "3 days ago",
+                ),
 
-const SizedBox(height: 40),
+                const SizedBox(height: 40),
+
+                /// ANALYTICS SECTION
+                const Text(
+                  "Learning Analytics",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                GridView.count(
+                  crossAxisCount: 2,
+                  shrinkWrap: true,
+                  physics:
+                      const NeverScrollableScrollPhysics(),
+
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  childAspectRatio: 1.25,
+
+                  children: [
+
+                    buildAnalyticsCard(
+                      title: "Study Hours",
+                      value: "14h",
+                      subtitle: "This Week",
+                      icon: Icons.access_time,
+                      color: Colors.blue,
+                    ),
+
+                    buildAnalyticsCard(
+                      title: "Quiz Average",
+                      value: "92%",
+                      subtitle: "Excellent",
+                      icon: Icons.bar_chart,
+                      color: Colors.green,
+                    ),
+
+                    buildAnalyticsCard(
+                      title: "Lessons Done",
+                      value: "18",
+                      subtitle: "Completed",
+                      icon: Icons.check_circle,
+                      color: Colors.orange,
+                    ),
+
+                    buildAnalyticsCard(
+                      title: "Weekly Goals",
+                      value: "4/5",
+                      subtitle: "Almost There",
+                      icon: Icons.flag,
+                      color: Colors.purple,
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 40),
               ],
             ),
           ),
@@ -585,81 +646,173 @@ const SizedBox(height: 40),
       ),
     );
   }
+
   Widget buildActivityCard({
-  required IconData icon,
-  required Color iconColor,
-  required String title,
-  required String subtitle,
-  required String time,
-}) {
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    required String subtitle,
+    required String time,
+  }) {
 
-  return Container(
-    width: double.infinity,
-    padding: const EdgeInsets.all(18),
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(18),
 
-    decoration: BoxDecoration(
-      color: const Color(0xFF11162A),
-      borderRadius: BorderRadius.circular(18),
-    ),
+      decoration: BoxDecoration(
+        color: const Color(0xFF11162A),
+        borderRadius: BorderRadius.circular(18),
+      ),
 
-    child: Row(
-      children: [
+      child: Row(
+        children: [
 
-        Container(
-          padding: const EdgeInsets.all(14),
+          Container(
+            padding: const EdgeInsets.all(14),
 
-          decoration: BoxDecoration(
-            color: iconColor.withOpacity(0.15),
-            borderRadius: BorderRadius.circular(14),
+            decoration: BoxDecoration(
+              color: iconColor.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(14),
+            ),
+
+            child: Icon(
+              icon,
+              color: iconColor,
+              size: 30,
+            ),
           ),
 
-          child: Icon(
-            icon,
-            color: iconColor,
-            size: 30,
+          const SizedBox(width: 18),
+
+          Expanded(
+            child: Column(
+              crossAxisAlignment:
+                  CrossAxisAlignment.start,
+
+              children: [
+
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+
+                const SizedBox(height: 6),
+
+                Text(
+                  subtitle,
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
 
-        const SizedBox(width: 18),
+          Text(
+            time,
+            style: const TextStyle(
+              color: Colors.white38,
+              fontSize: 12,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-        Expanded(
-          child: Column(
+  Widget buildAnalyticsCard({
+    required String title,
+    required String value,
+    required String subtitle,
+    required IconData icon,
+    required Color color,
+  }) {
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+
+      decoration: BoxDecoration(
+        color: const Color(0xFF11162A),
+        borderRadius: BorderRadius.circular(20),
+
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(0.15),
+            blurRadius: 12,
+            spreadRadius: 1,
+          ),
+        ],
+      ),
+
+      child: Column(
+        crossAxisAlignment:
+            CrossAxisAlignment.start,
+
+        mainAxisAlignment:
+            MainAxisAlignment.spaceBetween,
+
+        children: [
+
+          Container(
+            padding: const EdgeInsets.all(12),
+
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.15),
+              borderRadius:
+                  BorderRadius.circular(14),
+            ),
+
+            child: Icon(
+              icon,
+              color: color,
+              size: 28,
+            ),
+          ),
+
+          Column(
             crossAxisAlignment:
                 CrossAxisAlignment.start,
 
             children: [
 
               Text(
-                title,
+                value,
                 style: const TextStyle(
                   color: Colors.white,
-                  fontSize: 17,
+                  fontSize: 28,
                   fontWeight: FontWeight.bold,
                 ),
               ),
 
-              const SizedBox(height: 6),
+              const SizedBox(height: 4),
+
+              Text(
+                title,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+
+              const SizedBox(height: 4),
 
               Text(
                 subtitle,
                 style: const TextStyle(
                   color: Colors.white70,
-                  fontSize: 14,
+                  fontSize: 13,
                 ),
               ),
             ],
           ),
-        ),
-
-        Text(
-          time,
-          style: const TextStyle(
-            color: Colors.white38,
-            fontSize: 12,
-          ),
-        ),
-      ],
-    ),
-  );
-}
+        ],
+      ),
+    );
+  }
 }
