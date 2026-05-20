@@ -14,6 +14,7 @@ class _DashboardScreenState extends State<DashboardScreen>
   late AnimationController _controller;
   late Animation<double> _animation;
   int hoveredCardIndex = -1;
+  int hoveredCourseIndex = -1;
   
   @override
   void initState() {
@@ -375,6 +376,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                 const SizedBox(height: 20),
 
                 buildCourseCard(
+                  index: 0,
                   title: "Flutter Development",
                   subtitle:
                       "Build modern mobile applications",
@@ -387,6 +389,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                 const SizedBox(height: 20),
 
                 buildCourseCard(
+                  index: 1,
                   title: "Cyber Security Basics",
                   subtitle:
                       "Learn networking and cyber defense",
@@ -714,6 +717,7 @@ Container(
   }
 
 Widget buildCourseCard({
+  required int index,
   required String title,
   required String subtitle,
   required double progress,
@@ -722,24 +726,20 @@ Widget buildCourseCard({
   required Color color,
 }) {
 
-  return StatefulBuilder(
-    builder: (context, setHoverState) {
-
-      bool isHovered = false;
+    bool isHovered = hoveredCourseIndex == index;
 
       return MouseRegion(
-
         onEnter: (_) {
-          setHoverState(() {
-            isHovered = true;
+          setState(() {
+            hoveredCourseIndex = index;
           });
         },
 
         onExit: (_) {
-          setHoverState(() {
-            isHovered = false;
-          });
-        },
+          setState(() {
+              hoveredCourseIndex = -1;
+            });
+          },
 
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 300),
@@ -747,7 +747,7 @@ Widget buildCourseCard({
 
           transform: Matrix4.translationValues(
             0,
-            isHovered ? -20 : 0,
+            isHovered ? -8 : 0,
             0,
           ),
 
@@ -765,8 +765,8 @@ Widget buildCourseCard({
                     ? color.withOpacity(0.35)
                     : Colors.black.withOpacity(0.15),
 
-                blurRadius: isHovered ? 60 : 10,
-                spreadRadius: isHovered ? 8 : 1,
+                blurRadius: isHovered ? 20 : 0,
+                spreadRadius: isHovered ? 2 : 0,
 
                 offset: Offset(
                   0,
@@ -867,7 +867,7 @@ Widget buildCourseCard({
                   duration:
                       const Duration(milliseconds: 250),
 
-                  scale: isHovered ? 1.06 : 1,
+                  scale: isHovered ? 1.03 : 1,
 
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -896,8 +896,6 @@ Widget buildCourseCard({
           ),
         ),
       );
-    },
-  );
 }
 
   Widget buildActivityCard({
@@ -1009,7 +1007,7 @@ Widget buildCourseCard({
 
       transform: Matrix4.translationValues(
         0,
-        isHovered ? -12 : 0,
+        isHovered ? -6 : 0,
         0,
       ),
 
@@ -1026,12 +1024,12 @@ Widget buildCourseCard({
                 ? color.withOpacity(0.18)
                 : color.withOpacity(0.12),
 
-            blurRadius: isHovered ? 30 : 10,
-            spreadRadius: isHovered ? 2 : 0,
+            blurRadius: isHovered ? 18 : 10,
+            spreadRadius: isHovered ? 1 : 0,
 
             offset: Offset(
               0,
-              isHovered ? 10 : 4,
+              isHovered ? 6 : 3,
             ),
           ),
         ],
