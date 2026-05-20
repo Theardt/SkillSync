@@ -13,7 +13,8 @@ class _DashboardScreenState extends State<DashboardScreen>
 
   late AnimationController _controller;
   late Animation<double> _animation;
-
+  int hoveredCardIndex = -1;
+  
   @override
   void initState() {
     super.initState();
@@ -469,7 +470,7 @@ class _DashboardScreenState extends State<DashboardScreen>
 
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
-                  childAspectRatio: 1.25,
+                  childAspectRatio: 1.8,
 
                   children: [
 
@@ -479,6 +480,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                       subtitle: "This Week",
                       icon: Icons.access_time,
                       color: Colors.blue,
+                      index: 0,
                     ),
 
                     buildAnalyticsCard(
@@ -487,6 +489,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                       subtitle: "Excellent",
                       icon: Icons.bar_chart,
                       color: Colors.green,
+                      index: 1,
                     ),
 
                     buildAnalyticsCard(
@@ -495,6 +498,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                       subtitle: "Completed",
                       icon: Icons.check_circle,
                       color: Colors.orange,
+                      index: 2,
                     ),
 
                     buildAnalyticsCard(
@@ -503,6 +507,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                       subtitle: "Almost There",
                       icon: Icons.flag,
                       color: Colors.purple,
+                      index: 3,
                     ),
                   ],
                 ),
@@ -708,137 +713,192 @@ Container(
     );
   }
 
-  Widget buildCourseCard({
-    required String title,
-    required String subtitle,
-    required double progress,
-    required String progressText,
-    required IconData icon,
-    required Color color,
-  }) {
+Widget buildCourseCard({
+  required String title,
+  required String subtitle,
+  required double progress,
+  required String progressText,
+  required IconData icon,
+  required Color color,
+}) {
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
+  return StatefulBuilder(
+    builder: (context, setHoverState) {
 
-      decoration: BoxDecoration(
-        color: const Color(0xFF11162A),
-        borderRadius: BorderRadius.circular(18),
-      ),
+      bool isHovered = false;
 
-      child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.start,
+      return MouseRegion(
 
-        children: [
+        onEnter: (_) {
+          setHoverState(() {
+            isHovered = true;
+          });
+        },
 
-          Row(
-            children: [
+        onExit: (_) {
+          setHoverState(() {
+            isHovered = false;
+          });
+        },
 
-              Container(
-                padding: const EdgeInsets.all(12),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
 
-                decoration: BoxDecoration(
-                  color: color.withOpacity(0.2),
-                  borderRadius:
-                      BorderRadius.circular(14),
-                ),
+          transform: Matrix4.translationValues(
+            0,
+            isHovered ? -20 : 0,
+            0,
+          ),
 
-                child: Icon(
-                  icon,
-                  color: color,
-                  size: 32,
-                ),
-              ),
+          width: double.infinity,
+          padding: const EdgeInsets.all(20),
 
-              const SizedBox(width: 15),
+          decoration: BoxDecoration(
+            color: const Color(0xFF11162A),
+            borderRadius: BorderRadius.circular(18),
 
-              Expanded(
-                child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start,
+            boxShadow: [
 
-                  children: [
+              BoxShadow(
+                color: isHovered
+                    ? color.withOpacity(0.35)
+                    : Colors.black.withOpacity(0.15),
 
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight:
-                            FontWeight.bold,
-                      ),
-                    ),
+                blurRadius: isHovered ? 60 : 10,
+                spreadRadius: isHovered ? 8 : 1,
 
-                    const SizedBox(height: 5),
-
-                    Text(
-                      subtitle,
-                      style: const TextStyle(
-                        color: Colors.white70,
-                      ),
-                    ),
-                  ],
+                offset: Offset(
+                  0,
+                  isHovered ? 10 : 4,
                 ),
               ),
             ],
           ),
 
-          const SizedBox(height: 20),
+          child: Column(
+            crossAxisAlignment:
+                CrossAxisAlignment.start,
 
-          ClipRRect(
-            borderRadius:
-                BorderRadius.circular(20),
+            children: [
 
-            child: LinearProgressIndicator(
-              value: progress,
-              minHeight: 10,
-              backgroundColor: Colors.white12,
-              color: color,
-            ),
-          ),
+              Row(
+                children: [
 
-          const SizedBox(height: 10),
+                  Container(
+                    padding: const EdgeInsets.all(12),
 
-          Text(
-            progressText,
-            style: const TextStyle(
-              color: Colors.white70,
-            ),
-          ),
+                    decoration: BoxDecoration(
+                      color: color.withOpacity(0.2),
+                      borderRadius:
+                          BorderRadius.circular(14),
+                    ),
 
-          const SizedBox(height: 20),
+                    child: Icon(
+                      icon,
+                      color: color,
+                      size: 32,
+                    ),
+                  ),
 
-          SizedBox(
-            width: double.infinity,
-            height: 50,
+                  const SizedBox(width: 15),
 
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: color,
-                foregroundColor: Colors.white,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment:
+                          CrossAxisAlignment.start,
 
-                shape: RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(12),
+                      children: [
+
+                        Text(
+                          title,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight:
+                                FontWeight.bold,
+                          ),
+                        ),
+
+                        const SizedBox(height: 5),
+
+                        Text(
+                          subtitle,
+                          style: const TextStyle(
+                            color: Colors.white70,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 20),
+
+              ClipRRect(
+                borderRadius:
+                    BorderRadius.circular(20),
+
+                child: LinearProgressIndicator(
+                  value: progress,
+                  minHeight: 10,
+                  backgroundColor: Colors.white12,
+                  color: color,
                 ),
               ),
 
-              onPressed: () {},
+              const SizedBox(height: 10),
 
-              child: const Text(
-                "Continue Learning",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+              Text(
+                progressText,
+                style: const TextStyle(
+                  color: Colors.white70,
                 ),
               ),
-            ),
+
+              const SizedBox(height: 20),
+
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+
+                child: AnimatedScale(
+                  duration:
+                      const Duration(milliseconds: 250),
+
+                  scale: isHovered ? 1.06 : 1,
+
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: color,
+                      foregroundColor: Colors.white,
+
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(12),
+                      ),
+                    ),
+
+                    onPressed: () {},
+
+                    child: const Text(
+                      "Continue Learning",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-    );
-  }
+        ),
+      );
+    },
+  );
+}
 
   Widget buildActivityCard({
     required IconData icon,
@@ -919,14 +979,40 @@ Container(
   }
 
   Widget buildAnalyticsCard({
-    required String title,
-    required String value,
-    required String subtitle,
-    required IconData icon,
-    required Color color,
-  }) {
+  required String title,
+  required String value,
+  required String subtitle,
+  required IconData icon,
+  required Color color,
+  required int index,
+}) {
 
-    return Container(
+  final bool isHovered = hoveredCardIndex == index;
+
+  return MouseRegion(
+
+    onEnter: (_) {
+      setState(() {
+        hoveredCardIndex = index;
+      });
+    },
+
+    onExit: (_) {
+      setState(() {
+        hoveredCardIndex = -1;
+      });
+    },
+
+    child: AnimatedContainer(
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeOut,
+
+      transform: Matrix4.translationValues(
+        0,
+        isHovered ? -12 : 0,
+        0,
+      ),
+
       padding: const EdgeInsets.all(20),
 
       decoration: BoxDecoration(
@@ -934,17 +1020,25 @@ Container(
         borderRadius: BorderRadius.circular(20),
 
         boxShadow: [
+
           BoxShadow(
-            color: color.withOpacity(0.15),
-            blurRadius: 12,
-            spreadRadius: 1,
+            color: isHovered
+                ? color.withOpacity(0.18)
+                : color.withOpacity(0.12),
+
+            blurRadius: isHovered ? 30 : 10,
+            spreadRadius: isHovered ? 2 : 0,
+
+            offset: Offset(
+              0,
+              isHovered ? 10 : 4,
+            ),
           ),
         ],
       ),
 
       child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
 
         mainAxisAlignment:
             MainAxisAlignment.spaceBetween,
@@ -1006,6 +1100,7 @@ Container(
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 }
