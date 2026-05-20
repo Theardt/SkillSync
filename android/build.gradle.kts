@@ -15,7 +15,7 @@ plugins {
 
 dependencies {
 
-  // Import the Firebase BoM
+//   Import the Firebase BoM
   implementation(platform("com.google.firebase:firebase-bom:34.13.0"))
 
   // When using the BoM, you don't specify versions in Firebase library dependencies
