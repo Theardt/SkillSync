@@ -1,11 +1,1 @@
-{
-  "firestore": {
-    "database": "(default)",
-    "location": "africa-south1",
-    "rules": "firestore.rules",
-    "indexes": "firestore.indexes.json"
-  },
-  "auth": {
-    "providers": {}
-  }
-}
+{"firestore":{"database":"(default)","location":"africa-south1","rules":"firestore.rules","indexes":"firestore.indexes.json"},"auth":{"providers":{}},"flutter":{"platforms":{"android":{"default":{"projectId":"skillsync-b212e","appId":"1:101365714785:android:a0bb3c211f545dc5733f20","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"skillsync-b212e","configurations":{"android":"1:101365714785:android:a0bb3c211f545dc5733f20","ios":"1:101365714785:ios:140177e727b1368b733f20","macos":"1:101365714785:ios:140177e727b1368b733f20","web":"1:101365714785:web:d683b5281161b06a733f20","windows":"1:101365714785:web:dc8cd53acb69889b733f20"}}}}}}
