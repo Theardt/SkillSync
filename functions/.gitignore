@@ -1,11 +1,10 @@
-.dart_tool/
-build/
-*.dart.js
-*.info.json
-*.js
-*.js.map
-*.js.deps
-*.js.symbols
-firebase-debug.log
-firebase-debug.*.log
+# Compiled JavaScript files
+lib/**/*.js
+lib/**/*.js.map
+
+# TypeScript v1 declaration files
+typings/
+
+# Node.js dependency directory
+node_modules/
 *.local
