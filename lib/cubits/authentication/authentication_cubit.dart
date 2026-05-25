@@ -34,15 +34,31 @@ class AuthenticationCubit extends Cubit<MasterState<AuthenticationState>> {
   }
 
   Future<void> signInWithEmail(String email, String password) async {
+    //   emit(Loading(state.main));
+    //   try {
+    //     await _firebaseAuth.signInWithEmailAndPassword(
+    //       email: email.trim(),
+    //       password: password.trim(),
+    //     );
+    //   } on fb_auth.FirebaseAuthException catch (e) {
+    //     emit(Error(state.main,
+    //         message: e.message ?? "An error occurred during sign in."));
+    //   } catch (e) {
+    //     emit(Error(state.main, message: "An unexpected error occurred."));
+    //   }
+    // }\
     emit(Loading(state.main));
     try {
-      await _firebaseAuth.signInWithEmailAndPassword(
+      final userCredential = await _firebaseAuth.signInWithEmailAndPassword(
         email: email.trim(),
         password: password.trim(),
       );
+      if (userCredential.user != null) {
+        emit(Loaded(state.main.copyWith(isAuthenticated: true)));
+      }
     } on fb_auth.FirebaseAuthException catch (e) {
       emit(Error(state.main,
-          message: e.message ?? "An error occurred during sign in."));
+          message: e.message ?? "An error occurred during sign in"));
     } catch (e) {
       emit(Error(state.main, message: "An unexpected error occurred."));
     }
@@ -56,6 +72,7 @@ class AuthenticationCubit extends Cubit<MasterState<AuthenticationState>> {
           email: email.trim(), password: password.trim());
       if (userCredential.user != null) {
         await userCredential.user!.updateDisplayName(fullName);
+        emit(Loaded(state.main.copyWith(isAuthenticated: true)));
       }
     } on fb_auth.FirebaseAuthException catch (e) {
       emit(Error(state.main,

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -9,13 +10,20 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
   @override
   void initState() {
     super.initState();
 
     Timer(const Duration(seconds: 3), () {
-      Navigator.pushReplacementNamed(context, '/login');
+      //check if sign in already exists
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser != null) {
+        //logged in = straight to dashboar
+        Navigator.pushReplacementNamed(context, '/navigation');
+      } else {
+        //send to login
+        Navigator.pushReplacementNamed(context, '/login');
+      }
     });
   }
 
@@ -27,15 +35,12 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: const [
-
             Icon(
               Icons.school,
               size: 100,
               color: Colors.blue,
             ),
-
             SizedBox(height: 20),
-
             Text(
               'SkillSync',
               style: TextStyle(
@@ -44,9 +49,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 color: Colors.white,
               ),
             ),
-
             SizedBox(height: 10),
-
             Text(
               'Learn. Grow. Achieve.',
               style: TextStyle(
@@ -54,9 +57,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 color: Colors.white70,
               ),
             ),
-
             SizedBox(height: 40),
-
             CircularProgressIndicator(
               color: Colors.blue,
             ),
