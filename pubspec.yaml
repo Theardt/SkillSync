@@ -28,15 +28,23 @@ dependencies:
   get_it: ^9.2.0
   firebase_core: ^4.9.0
   firebase_auth: ^6.5.1
-
+  cloud_firestore: ^6.4.1
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
   flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.13.1
 
 flutter:
   uses-material-design: true
   assets:
     - assets/lottie/
     - assets/png/
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/png/school_icon (2).png"
+  adaptive_icon_background: "#020B3A" # Matches your dark blue app theme background!
+  adaptive_icon_foreground: "assets/png/school_icon (2)FG.png"
