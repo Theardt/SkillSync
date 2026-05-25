@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import '../../../constants/app_colors.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -63,7 +64,6 @@ class _DashboardScreenState extends State<DashboardScreen>
   final isTablet =
       screenWidth >= 700 && screenWidth < 1100;
 
-  final isDesktop = screenWidth >= 1100;
   final horizontalPadding = isMobile
     ? 16.0
     : isTablet
@@ -75,7 +75,7 @@ final sectionSpacing = isMobile ? 24.0 : 40.0;
 final titleSize = isMobile ? 18.0 : 22.0;
 
   return Scaffold(
-      backgroundColor: const Color(0xFF020B3A),
+      backgroundColor: AppColors.background,
 
       body: FadeTransition(
   opacity: _controller,
@@ -147,10 +147,10 @@ final titleSize = isMobile ? 18.0 : 22.0;
                   padding: const EdgeInsets.all(24),
 
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
+                    gradient: LinearGradient(
                       colors: [
-                        Color(0xFF3B82F6),
-                        Color(0xFF2563EB),
+                        AppColors.primaryBlue,
+                        AppColors.darkBlue,
                       ],
                     ),
 
@@ -298,52 +298,86 @@ const SizedBox(height: 30),
                   padding: const EdgeInsets.all(20),
 
                   decoration: BoxDecoration(
-                    color: const Color(0xFF11162A),
+                    color: AppColors.card,
                     borderRadius:
                         BorderRadius.circular(18),
                   ),
 
-                  child: Row(
-                    children: const [
+                  child: isMobile
+    ? Column(
+        crossAxisAlignment:
+            CrossAxisAlignment.start,
 
-                      Icon(
-                        Icons.local_fire_department,
-                        color: Colors.orange,
-                        size: 45,
-                      ),
+        children: const [
 
-                      SizedBox(width: 20),
+          Icon(
+            Icons.local_fire_department,
+            color: Colors.orange,
+            size: 45,
+          ),
 
-                      Column(
-                        crossAxisAlignment:
-                            CrossAxisAlignment.start,
+          SizedBox(height: 15),
 
-                        children: [
+          Text(
+            "Daily Streak",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
 
-                          Text(
-                            "Daily Streak",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight:
-                                  FontWeight.bold,
-                            ),
-                          ),
+          SizedBox(height: 5),
 
-                          SizedBox(height: 5),
+          Text(
+            "7 days in a row 🔥",
+            style: TextStyle(
+              color: Colors.white70,
+            ),
+          ),
+        ],
+      )
 
-                          Text(
-                            "7 days in a row 🔥",
-                            style: TextStyle(
-                              color: Colors.white70,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+    : Row(
+        children: const [
+
+          Icon(
+            Icons.local_fire_department,
+            color: Colors.orange,
+            size: 45,
+          ),
+
+          SizedBox(width: 20),
+
+          Column(
+            crossAxisAlignment:
+                CrossAxisAlignment.start,
+
+            children: [
+
+              Text(
+                "Daily Streak",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
+              ),
 
+              SizedBox(height: 5),
+
+              Text(
+                "7 days in a row 🔥",
+                style: TextStyle(
+                  color: Colors.white70,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+
+    ),
                 const SizedBox(height: 30),
 
                 /// RECOMMENDED COURSES
@@ -518,7 +552,7 @@ Container(
   padding: const EdgeInsets.all(20),
 
   decoration: BoxDecoration(
-    color: const Color(0xFF11162A),
+    color: AppColors.card,
     borderRadius: BorderRadius.circular(20),
   ),
 
@@ -744,15 +778,15 @@ Widget buildCourseCard({
             ),
 
           decoration: BoxDecoration(
-            color: const Color(0xFF11162A),
+            color: AppColors.card,
             borderRadius: BorderRadius.circular(18),
 
             boxShadow: [
 
               BoxShadow(
                 color: isHovered
-                    ? color.withOpacity(0.35)
-                    : Colors.black.withOpacity(0.15),
+                    ? color.withValues(alpha: 0.35)
+                    : Colors.black.withValues(alpha: 0.15),
 
                 blurRadius: isHovered ? 20 : 0,
                 spreadRadius: isHovered ? 2 : 0,
@@ -778,7 +812,7 @@ Widget buildCourseCard({
                     padding: const EdgeInsets.all(12),
 
                     decoration: BoxDecoration(
-                      color: color.withOpacity(0.2),
+                      color: color.withValues(alpha: 0.2),
                       borderRadius:
                           BorderRadius.circular(14),
                     ),
@@ -898,7 +932,7 @@ Widget buildProgressCard({
     padding: const EdgeInsets.all(20),
 
     decoration: BoxDecoration(
-      color: const Color(0xFF11162A),
+      color: AppColors.card,
       borderRadius: BorderRadius.circular(18),
     ),
 
@@ -947,7 +981,7 @@ Widget buildProgressCard({
       padding: const EdgeInsets.all(18),
 
       decoration: BoxDecoration(
-        color: const Color(0xFF11162A),
+        color: AppColors.card,
         borderRadius: BorderRadius.circular(18),
       ),
 
@@ -958,7 +992,7 @@ Widget buildProgressCard({
             padding: const EdgeInsets.all(14),
 
             decoration: BoxDecoration(
-              color: iconColor.withOpacity(0.15),
+              color: iconColor.withValues(alpha:0.15),
               borderRadius: BorderRadius.circular(14),
             ),
 
@@ -1050,15 +1084,15 @@ Widget buildProgressCard({
       padding: const EdgeInsets.all(20),
 
       decoration: BoxDecoration(
-        color: const Color(0xFF11162A),
+        color: AppColors.card,
         borderRadius: BorderRadius.circular(20),
 
         boxShadow: [
 
           BoxShadow(
             color: isHovered
-                ? color.withOpacity(0.18)
-                : color.withOpacity(0.12),
+                ? color.withValues(alpha:0.18)
+                : color.withValues(alpha:0.12),
 
             blurRadius: isHovered ? 18 : 10,
             spreadRadius: isHovered ? 1 : 0,
@@ -1083,7 +1117,7 @@ Widget buildProgressCard({
             padding: const EdgeInsets.all(12),
 
             decoration: BoxDecoration(
-              color: color.withOpacity(0.15),
+              color: color.withValues(alpha:0.15),
               borderRadius:
                   BorderRadius.circular(14),
             ),

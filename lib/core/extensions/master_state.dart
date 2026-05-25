@@ -6,8 +6,8 @@ import 'package:skillsync/core/dependency_injection.dart';
 import 'package:skillsync/models/error_model.dart';
 
 enum MasterActions {
-  DO_NOTHING,
-  GO_TO_HOME,
+  doNothing,
+  goToHome,
   shouldPop,
 }
 
