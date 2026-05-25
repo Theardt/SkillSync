@@ -303,47 +303,81 @@ const SizedBox(height: 30),
                         BorderRadius.circular(18),
                   ),
 
-                  child: Row(
-                    children: const [
+                  child: isMobile
+    ? Column(
+        crossAxisAlignment:
+            CrossAxisAlignment.start,
 
-                      Icon(
-                        Icons.local_fire_department,
-                        color: Colors.orange,
-                        size: 45,
-                      ),
+        children: const [
 
-                      SizedBox(width: 20),
+          Icon(
+            Icons.local_fire_department,
+            color: Colors.orange,
+            size: 45,
+          ),
 
-                      Column(
-                        crossAxisAlignment:
-                            CrossAxisAlignment.start,
+          SizedBox(height: 15),
 
-                        children: [
+          Text(
+            "Daily Streak",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
 
-                          Text(
-                            "Daily Streak",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight:
-                                  FontWeight.bold,
-                            ),
-                          ),
+          SizedBox(height: 5),
 
-                          SizedBox(height: 5),
+          Text(
+            "7 days in a row 🔥",
+            style: TextStyle(
+              color: Colors.white70,
+            ),
+          ),
+        ],
+      )
 
-                          Text(
-                            "7 days in a row 🔥",
-                            style: TextStyle(
-                              color: Colors.white70,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+    : Row(
+        children: const [
+
+          Icon(
+            Icons.local_fire_department,
+            color: Colors.orange,
+            size: 45,
+          ),
+
+          SizedBox(width: 20),
+
+          Column(
+            crossAxisAlignment:
+                CrossAxisAlignment.start,
+
+            children: [
+
+              Text(
+                "Daily Streak",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
+              ),
 
+              SizedBox(height: 5),
+
+              Text(
+                "7 days in a row 🔥",
+                style: TextStyle(
+                  color: Colors.white70,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+
+    ),
                 const SizedBox(height: 30),
 
                 /// RECOMMENDED COURSES
