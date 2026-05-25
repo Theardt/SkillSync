@@ -3,7 +3,7 @@ part of 'screen_controller_cubit.dart';
 
 enum MainScreens {
   home('Home', Icons.home),
-  about('About', Icons.info); //TODO: haal about uit, net vir reference
+  about('About', Icons.info); // About screen kept temporarily for reference
 
   final String displayName;
   final IconData icon;
