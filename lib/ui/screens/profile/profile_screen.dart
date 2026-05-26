@@ -172,7 +172,7 @@ class ProfileScreen extends StatelessWidget {
 
                 crossAxisSpacing: 16,
                 mainAxisSpacing: 16,
-                childAspectRatio: 1.2,
+                childAspectRatio: 1.0,
 
                 children: const [
 
