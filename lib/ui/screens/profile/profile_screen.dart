@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../../../constants/app_colors.dart';
 
@@ -6,31 +7,25 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final screenWidth = MediaQuery.of(context).size.width;
 
     final isMobile = screenWidth < 700;
 
     return Scaffold(
       backgroundColor: AppColors.background,
-
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(isMobile ? 16 : 28),
-
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-
             children: [
 
               /// HEADER
               Row(
                 children: [
-
                   CircleAvatar(
                     radius: isMobile ? 40 : 50,
                     backgroundColor: Colors.blue,
-
                     child: Icon(
                       Icons.person,
                       color: Colors.white,
@@ -42,9 +37,7 @@ class ProfileScreen extends StatelessWidget {
 
                   Expanded(
                     child: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.start,
-
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: const [
 
                         Text(
@@ -87,7 +80,6 @@ class ProfileScreen extends StatelessWidget {
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(24),
-
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
@@ -95,14 +87,10 @@ class ProfileScreen extends StatelessWidget {
                       AppColors.darkBlue,
                     ],
                   ),
-
                   borderRadius: BorderRadius.circular(20),
                 ),
-
                 child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start,
-
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
 
                     const Text(
@@ -127,9 +115,7 @@ class ProfileScreen extends StatelessWidget {
                     const SizedBox(height: 12),
 
                     ClipRRect(
-                      borderRadius:
-                          BorderRadius.circular(20),
-
+                      borderRadius: BorderRadius.circular(20),
                       child: LinearProgressIndicator(
                         value: 0.78,
                         minHeight: 12,
@@ -169,11 +155,9 @@ class ProfileScreen extends StatelessWidget {
                 crossAxisCount: isMobile ? 2 : 4,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-
                 crossAxisSpacing: 16,
                 mainAxisSpacing: 16,
                 childAspectRatio: 1.0,
-
                 children: const [
 
                   ProfileStatCard(
@@ -223,7 +207,6 @@ class ProfileScreen extends StatelessWidget {
               Wrap(
                 spacing: 16,
                 runSpacing: 16,
-
                 children: const [
 
                   AchievementBadge(
@@ -282,8 +265,17 @@ class ProfileScreen extends StatelessWidget {
                     icon: Icons.logout,
                     title: "Logout",
                     color: Colors.red,
-                    onTap: () {
-                      // TODO: Add Logout logic
+                    onTap: () async {
+
+                      print("LOGOUT BUTTON PRESSED");
+
+                      await FirebaseAuth.instance.signOut();
+
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        '/login',
+                        (route) => false,
+                      );
                     },
                   ),
                 ],
@@ -303,40 +295,40 @@ class ProfileScreen extends StatelessWidget {
     VoidCallback? onTap,
     Color color = Colors.blue,
   }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(18),
+        child: Ink(
+          width: double.infinity,
+          height: 60,
+          decoration: BoxDecoration(
+            color: AppColors.card,
+            borderRadius: BorderRadius.circular(18),
+          ),
+          child: Row(
+            children: [
 
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(18),
-      child: Ink(
-        width: double.infinity,
-        height: 60,
+              const SizedBox(width: 20),
 
-        decoration: BoxDecoration(
-          color: AppColors.card,
-          borderRadius: BorderRadius.circular(18),
-        ),
-
-        child: Row(
-          children: [
-
-            const SizedBox(width: 20),
-
-            Icon(
-              icon,
-              color: color,
-            ),
-
-            const SizedBox(width: 20),
-
-            Text(
-              title,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
+              Icon(
+                icon,
+                color: color,
               ),
-            ),
-          ],
+
+              const SizedBox(width: 20),
+
+              Text(
+                title,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -344,7 +336,6 @@ class ProfileScreen extends StatelessWidget {
 }
 
 class ProfileStatCard extends StatelessWidget {
-
   final IconData icon;
   final String value;
   final String label;
@@ -360,19 +351,14 @@ class ProfileStatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Container(
       padding: const EdgeInsets.all(20),
-
       decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.circular(18),
       ),
-
       child: Column(
-        mainAxisAlignment:
-            MainAxisAlignment.center,
-
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
 
           Icon(
@@ -407,7 +393,6 @@ class ProfileStatCard extends StatelessWidget {
 }
 
 class AchievementBadge extends StatelessWidget {
-
   final String title;
   final IconData icon;
   final Color color;
@@ -421,21 +406,17 @@ class AchievementBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: 18,
         vertical: 14,
       ),
-
       decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.circular(18),
       ),
-
       child: Row(
         mainAxisSize: MainAxisSize.min,
-
         children: [
 
           Icon(
