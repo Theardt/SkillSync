@@ -29,6 +29,14 @@ class _LoginScreenState extends State<LoginScreen> {
         listener: (context, state) {
           if (state is Loaded && state.main.isAuthenticated) {
             Navigator.pushReplacementNamed(context, '/navigation');
+          } else if (state is Loaded && state.message.isNotEmpty) {
+            //show success snackbar for successufgll email sent
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: Colors.green,
+              ),
+            );
           } else if (state is Error) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -144,7 +152,24 @@ class _LoginScreenState extends State<LoginScreen> {
                     Align(
                       alignment: Alignment.centerRight,
                       child: TextButton(
-                        onPressed: isLoading ? null : () {},
+                        onPressed: isLoading
+                            ? null
+                            : () {
+                                final email = _emailController.text.trim();
+                                if (email.isNotEmpty) {
+                                  //trigger pword reset email
+                                  sl.authenticationCubit
+                                      .sendPasswordReset(email);
+                                } else {
+                                  //warn if empty email field
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(const SnackBar(
+                                    content: Text(
+                                        "Please enter email address in the email field first."),
+                                    backgroundColor: Colors.orangeAccent,
+                                  ));
+                                }
+                              },
                         child: const Text(
                           "Forgot Password?",
                           style: TextStyle(
