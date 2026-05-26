@@ -6,6 +6,7 @@ import 'ui/screens/auth/login_screen.dart';
 import 'ui/screens/auth/register_screen.dart';
 import 'ui/screens/dashboard/dashboard_screen.dart';
 import 'ui/screens/navigation/navigation_screen.dart';
+import 'ui/screens/profile/edit_profile_screen.dart';
 import 'core/dependency_injection.dart';
 
 void main() async {
@@ -35,6 +36,7 @@ class SkillSyncApp extends StatelessWidget {
         '/register': (context) => const RegisterScreen(),
         '/dashboard': (context) => const DashboardScreen(),
         '/navigation': (context) => const NavigationScreen(),
+        '/edit_profile': (context) => const EditProfileScreen(),
       },
     );
   }
