@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../constants/app_colors.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 class LeaderboardScreen extends StatelessWidget {
   const LeaderboardScreen({super.key});
@@ -30,7 +31,7 @@ class LeaderboardScreen extends StatelessWidget {
       },
 
       {
-        "name": "Donique",
+        "name": "Dominique",
         "xp": "2050 XP",
         "level": "Level 10",
         "rank": 3,
@@ -209,8 +210,11 @@ class LeaderboardScreen extends StatelessWidget {
 
                             children: [
 
-                              Text(
+                              AutoSizeText(
                                 user["name"] as String,
+                                maxLines: 1,
+                                minFontSize: 14,
+                                overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 18,
@@ -350,15 +354,17 @@ class PodiumCard extends StatelessWidget {
 
           const SizedBox(height: 10),
 
-          Text(
-            name,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+        AutoSizeText(
+          name,
+          maxLines: 1,
+          minFontSize: 8,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
           ),
+        ),
 
           const SizedBox(height: 6),
 
