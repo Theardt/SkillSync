@@ -261,6 +261,9 @@ class ProfileScreen extends StatelessWidget {
                   buildActionButton(
                     icon: Icons.edit,
                     title: "Edit Profile",
+                    onTap: () {
+                      Navigator.pushNamed(context, '/edit_profile');
+                    },
                   ),
 
                   const SizedBox(height: 15),
@@ -268,6 +271,9 @@ class ProfileScreen extends StatelessWidget {
                   buildActionButton(
                     icon: Icons.settings,
                     title: "Settings",
+                    onTap: () {
+                      // TODO: Add Settings navigation
+                    },
                   ),
 
                   const SizedBox(height: 15),
@@ -276,6 +282,9 @@ class ProfileScreen extends StatelessWidget {
                     icon: Icons.logout,
                     title: "Logout",
                     color: Colors.red,
+                    onTap: () {
+                      // TODO: Add Logout logic
+                    },
                   ),
                 ],
               ),
@@ -291,39 +300,44 @@ class ProfileScreen extends StatelessWidget {
   Widget buildActionButton({
     required IconData icon,
     required String title,
+    VoidCallback? onTap,
     Color color = Colors.blue,
   }) {
 
-    return Container(
-      width: double.infinity,
-      height: 60,
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(18),
+      child: Ink(
+        width: double.infinity,
+        height: 60,
 
-      decoration: BoxDecoration(
-        color: AppColors.card,
-        borderRadius: BorderRadius.circular(18),
-      ),
+        decoration: BoxDecoration(
+          color: AppColors.card,
+          borderRadius: BorderRadius.circular(18),
+        ),
 
-      child: Row(
-        children: [
+        child: Row(
+          children: [
 
-          const SizedBox(width: 20),
+            const SizedBox(width: 20),
 
-          Icon(
-            icon,
-            color: color,
-          ),
-
-          const SizedBox(width: 20),
-
-          Text(
-            title,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
+            Icon(
+              icon,
+              color: color,
             ),
-          ),
-        ],
+
+            const SizedBox(width: 20),
+
+            Text(
+              title,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -30,7 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
           if (state is Loaded && state.main.isAuthenticated) {
             Navigator.pushReplacementNamed(context, '/navigation');
           } else if (state is Loaded && state.message.isNotEmpty) {
-            //show success snackbar for successufgll email sent
+            //show success snackbar for successufull email sent
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.message),
