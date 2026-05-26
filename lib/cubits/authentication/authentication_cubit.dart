@@ -64,6 +64,25 @@ class AuthenticationCubit extends Cubit<MasterState<AuthenticationState>> {
     }
   }
 
+  Future<void> sendPasswordReset(String email) async {
+    emit(Loading(state.main));
+    try {
+      await _firebaseAuth.sendPasswordResetEmail(
+        email: email.trim(),
+      );
+      //emit success
+      emit(Loaded(state.main,
+          message: "Password reset email sent! Check your inbox."));
+    } on fb_auth.FirebaseAuthException catch (e) {
+      emit(Error(state.main,
+          message: e.message ??
+              "Failed to send password reset email. Please try again later."));
+    } catch (e) {
+      emit(Error(state.main,
+          message: "An unexpected error occurred. Please try again later."));
+    }
+  }
+
   Future<void> signUpWithEmail(
       String email, String password, String fullName) async {
     emit(Loading(state.main));
