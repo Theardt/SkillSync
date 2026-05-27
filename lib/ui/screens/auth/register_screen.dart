@@ -42,7 +42,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
       if (!emailRegex.hasMatch(email.trim())) {
         setState(() {
-          _emailError = "Please enter a valid email (e.g. name@domain.com";
+          _emailError = "Please enter a valid email (e.g. name@domain.com)";
         });
       } else {
         setState(() {
