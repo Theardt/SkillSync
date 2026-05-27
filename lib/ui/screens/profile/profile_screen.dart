@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../../../constants/app_colors.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -35,44 +36,58 @@ class ProfileScreen extends StatelessWidget {
 
                   const SizedBox(width: 20),
 
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                Expanded(
+                      child: StreamBuilder<DocumentSnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(FirebaseAuth.instance.currentUser!.uid)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) {
+                            return const CircularProgressIndicator();
+                          }
 
-                        Text(
-                          "De Bruyn",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                          final data =
+                              snapshot.data!.data() as Map<String, dynamic>;
 
-                        SizedBox(height: 6),
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                data['name'] ?? '',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
 
-                        Text(
-                          "Level 12 Learner 🚀",
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 16,
-                          ),
-                        ),
+                              const SizedBox(height: 6),
 
-                        SizedBox(height: 6),
+                              const Text(
+                                "Level 12 Learner 🚀",
+                                style: TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 16,
+                                ),
+                              ),
 
-                        Text(
-                          "debruyn95@skillsync.com",
-                          style: TextStyle(
-                            color: Colors.white38,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                              const SizedBox(height: 6),
+
+                              Text(
+                                data['email'] ?? '',
+                                style: const TextStyle(
+                                  color: Colors.white38,
+                                  fontSize: 14,
+                                ),
               ),
+            ],
+          );
+        },
+      ),
+    ),
+  ],
+),
 
               const SizedBox(height: 35),
 
