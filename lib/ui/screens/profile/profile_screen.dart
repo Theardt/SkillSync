@@ -37,18 +37,30 @@ class ProfileScreen extends StatelessWidget {
                   const SizedBox(width: 20),
 
                 Expanded(
-                      child: StreamBuilder<DocumentSnapshot>(
-                        stream: FirebaseFirestore.instance
-                            .collection('users')
-                            .doc(FirebaseAuth.instance.currentUser!.uid)
-                            .snapshots(),
-                        builder: (context, snapshot) {
-                          if (!snapshot.hasData) {
-                            return const CircularProgressIndicator();
+                      child: Builder(
+                        builder: (context) {
+                          final user = FirebaseAuth.instance.currentUser;
+
+                          if (user == null) {
+                            return const Center(
+                              child: Text(
+                                "Not logged in",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            );
                           }
 
-                          final data =
-                              snapshot.data!.data() as Map<String, dynamic>;
+                          return StreamBuilder<DocumentSnapshot>(
+                            stream: FirebaseFirestore.instance
+                                .collection('users')
+                                .doc(user.uid)
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              if (!snapshot.hasData) {
+                                return const CircularProgressIndicator();
+                              }
+
+                            final data = raw as Map<String, dynamic>;
 
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
