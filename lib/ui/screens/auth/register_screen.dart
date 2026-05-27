@@ -14,12 +14,42 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  String? _emailError;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _emailController.addListener(_validateEmailRealTime);
+  }
+
   @override
   void dispose() {
+    _emailController.removeListener(_validateEmailRealTime);
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  void _validateEmailRealTime() {
+    final email = _emailController.text;
+    if (email.isEmpty) {
+      setState(() {
+        _emailError = null;
+      });
+    } else {
+      final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+      if (!emailRegex.hasMatch(email.trim())) {
+        setState(() {
+          _emailError = "Please enter a valid email (e.g. name@domain.com";
+        });
+      } else {
+        setState(() {
+          _emailError = null;
+        });
+      }
+    }
   }
 
   @override
@@ -120,11 +150,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     TextField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
+                      textCapitalization: TextCapitalization.none,
+                      autocorrect: false,
                       enabled: !isLoading,
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
                         hintText: "Email",
                         hintStyle: const TextStyle(color: Colors.white54),
+                        errorText: _emailError,
                         prefixIcon: const Icon(
                           Icons.email,
                           color: Colors.blue,
@@ -183,19 +216,35 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 final email = _emailController.text.trim();
                                 final password =
                                     _passwordController.text.trim();
-                                if (name.isNotEmpty &&
-                                    email.isNotEmpty &&
-                                    password.isNotEmpty) {
-                                  sl.authenticationCubit
-                                      .signUpWithEmail(email, password, name);
-                                } else {
+
+                                if (name.isEmpty ||
+                                    email.isEmpty ||
+                                    password.isEmpty) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                       content:
-                                          Text("Please fill in all fields"),
+                                          Text("Please fill in all fields!"),
                                       backgroundColor: Colors.orangeAccent,
                                     ),
                                   );
+                                }
+                                // if (name.isNotEmpty &&
+                                //     email.isNotEmpty &&
+                                //     password.isNotEmpty) {
+                                //   sl.authenticationCubit
+                                //       .signUpWithEmail(email, password, name);
+                                // }
+                                else if (_emailError != null) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                          "Please correct errors, some fields are invalid."),
+                                      backgroundColor: Colors.redAccent,
+                                    ),
+                                  );
+                                } else {
+                                  sl.authenticationCubit
+                                      .signUpWithEmail(email, password, name);
                                 }
                               },
                         child: isLoading

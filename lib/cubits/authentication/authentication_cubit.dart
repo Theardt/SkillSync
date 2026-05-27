@@ -33,6 +33,29 @@ class AuthenticationCubit extends Cubit<MasterState<AuthenticationState>> {
     emit(const Initial(AuthenticationState()));
   }
 
+//helper method - error handling, nicer error messages
+  String _mapAuthException(fb_auth.FirebaseAuthException e) {
+    switch (e.code) {
+      case 'invalid-email':
+        return "The email address format is not correct, please ensure the full email address is entered!";
+      case 'user-disabled':
+        return "This account has been disabled. Please contact support@skillsync.co.za";
+      case 'user-not-found':
+        return "We couldn't find an account with this email. Register for an account now!";
+      case 'wrong-password':
+      case 'invalid-credential':
+        return "The password you have entered is incorrect, please double-check and try again, or request a password reset";
+      case 'email-already-in-use':
+        return "An account is already registered with this email. Try logging in instead!";
+      case 'weak-password':
+        return "Please choose a stronger password (min 8 characters, min 1 special character, min 1 number)";
+      case 'network-request-failed':
+        return "A connection error occurred. Check your internet and try again!";
+      default:
+        return e.message ?? "An unexpected error occurred. Please try again.";
+    }
+  }
+
   Future<void> signInWithEmail(String email, String password) async {
     //   emit(Loading(state.main));
     //   try {
@@ -57,8 +80,7 @@ class AuthenticationCubit extends Cubit<MasterState<AuthenticationState>> {
         emit(Loaded(state.main.copyWith(isAuthenticated: true)));
       }
     } on fb_auth.FirebaseAuthException catch (e) {
-      emit(Error(state.main,
-          message: e.message ?? "An error occurred during sign in"));
+      emit(Error(state.main, message: _mapAuthException(e)));
     } catch (e) {
       emit(Error(state.main, message: "An unexpected error occurred."));
     }
@@ -74,9 +96,11 @@ class AuthenticationCubit extends Cubit<MasterState<AuthenticationState>> {
       emit(Loaded(state.main,
           message: "Password reset email sent! Check your inbox."));
     } on fb_auth.FirebaseAuthException catch (e) {
-      emit(Error(state.main,
-          message: e.message ??
-              "Failed to send password reset email. Please try again later."));
+      emit(Error(state.main, message: _mapAuthException(e)));
+      //     message: e.message ??
+      // emit(Error(state.main,
+      //     message: e.message ??
+      //         "Failed to send password reset email. Please try again later."));
     } catch (e) {
       emit(Error(state.main,
           message: "An unexpected error occurred. Please try again later."));
@@ -94,8 +118,9 @@ class AuthenticationCubit extends Cubit<MasterState<AuthenticationState>> {
         emit(Loaded(state.main.copyWith(isAuthenticated: true)));
       }
     } on fb_auth.FirebaseAuthException catch (e) {
-      emit(Error(state.main,
-          message: e.message ?? "An error occurred during registration."));
+      // emit(Error(state.main,
+      //     message: e.message ?? "An error occurred during registration."));
+      emit(Error(state.main, message: _mapAuthException(e)));
     } catch (e) {
       emit(Error(state.main, message: "An unexpected error occurred."));
     }
