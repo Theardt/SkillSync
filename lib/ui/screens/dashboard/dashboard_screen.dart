@@ -425,7 +425,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                       physics: const NeverScrollableScrollPhysics(),
                       crossAxisSpacing: 16,
                       mainAxisSpacing: 16,
-                      childAspectRatio: isMobile ? 2.4 : 1.8,
+                      childAspectRatio: isMobile ? 1.9 : 1.6,
                       children: [
                         buildAnalyticsCard(
                           title: "Study Hours",

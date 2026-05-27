@@ -8,6 +8,8 @@ import 'ui/screens/dashboard/dashboard_screen.dart';
 import 'ui/screens/navigation/navigation_screen.dart';
 import 'ui/screens/profile/edit_profile_screen.dart';
 import 'core/dependency_injection.dart';
+import 'services/firestore_seed.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,6 +17,21 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await DependencyInjection.init();
+  
+ // CONTROLLED SEEDING (safe toggle)
+  const bool shouldSeedFirestore = false;
+
+  if (shouldSeedFirestore) {
+    try {
+      await seedFirestore();
+      print("Firestore seeded successfully");
+    } catch (e) {
+      print("Seed error: $e");
+    }
+  } else {
+    print("Firestore seeding skipped");
+  }
+
   runApp(const SkillSyncApp());
 }
 
