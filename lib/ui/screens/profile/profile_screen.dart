@@ -37,68 +37,63 @@ class ProfileScreen extends StatelessWidget {
                   const SizedBox(width: 20),
 
                 Expanded(
-                      child: Builder(
-                        builder: (context) {
-                          final user = FirebaseAuth.instance.currentUser;
+                    child: Builder(
+                      builder: (context) {
+                        final user = FirebaseAuth.instance.currentUser;
 
-                          if (user == null) {
-                            return const Center(
-                              child: Text(
-                                "Not logged in",
+                        if (user == null) {
+                          return const Center(
+                            child: Text(
+                              "Not logged in",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          );
+                        }
+
+                        return StreamBuilder<DocumentSnapshot>(
+                          stream: FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(user.uid)
+                              .snapshots(),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) {
+                              return const CircularProgressIndicator();
+                            }
+
+                            final data = snapshot.data?.data() as Map<String, dynamic>?;
+
+                            if (data == null) {
+                              return const Text(
+                                "Profile not found",
                                 style: TextStyle(color: Colors.white),
-                              ),
-                            );
-                          }
+                              );
+                            }
 
-                          return StreamBuilder<DocumentSnapshot>(
-                            stream: FirebaseFirestore.instance
-                                .collection('users')
-                                .doc(user.uid)
-                                .snapshots(),
-                            builder: (context, snapshot) {
-                              if (!snapshot.hasData) {
-                                return const CircularProgressIndicator();
-                              }
-
-                            final data = raw as Map<String, dynamic>;
-
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                data['name'] ?? '',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.bold,
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  data['name'] ?? '',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-
-                              const SizedBox(height: 6),
-
-                              const Text(
-                                "Level 12 Learner 🚀",
-                                style: TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 16,
-                                ),
-                              ),
-
-                              const SizedBox(height: 6),
-
-                              Text(
-                                data['email'] ?? '',
-                                style: const TextStyle(
-                                  color: Colors.white38,
-                                  fontSize: 14,
-                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  data['email'] ?? '',
+                                  style: const TextStyle(
+                                    color: Colors.white38,
+                                    fontSize: 14,
+                ),
               ),
             ],
           );
         },
-      ),
-    ),
-  ],
+      );
+    },
+  ),
 ),
 
               const SizedBox(height: 35),
