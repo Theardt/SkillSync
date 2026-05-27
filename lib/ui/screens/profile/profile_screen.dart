@@ -23,77 +23,76 @@ class ProfileScreen extends StatelessWidget {
 
               /// HEADER
               Row(
-                children: [
-                  CircleAvatar(
-                    radius: isMobile ? 40 : 50,
-                    backgroundColor: Colors.blue,
-                    child: Icon(
-                      Icons.person,
-                      color: Colors.white,
-                      size: isMobile ? 40 : 50,
+                  children: [
+                    CircleAvatar(
+                      radius: 40,
+                      backgroundColor: Colors.blue,
+                      child: const Icon(Icons.person, color: Colors.white, size: 40),
                     ),
-                  ),
 
-                  const SizedBox(width: 20),
+                    const SizedBox(width: 20),
 
-                Expanded(
-                    child: Builder(
-                      builder: (context) {
-                        final user = FirebaseAuth.instance.currentUser;
+                    Expanded(
+                      child: Builder(
+                        builder: (context) {
+                          final user = FirebaseAuth.instance.currentUser;
 
-                        if (user == null) {
-                          return const Center(
-                            child: Text(
+                          if (user == null) {
+                            return const Text(
                               "Not logged in",
                               style: TextStyle(color: Colors.white),
-                            ),
-                          );
-                        }
+                            );
+                          }
 
-                        return StreamBuilder<DocumentSnapshot>(
-                          stream: FirebaseFirestore.instance
-                              .collection('users')
-                              .doc(user.uid)
-                              .snapshots(),
-                          builder: (context, snapshot) {
-                            if (!snapshot.hasData) {
-                              return const CircularProgressIndicator();
-                            }
+                          return StreamBuilder<DocumentSnapshot>(
+                            stream: FirebaseFirestore.instance
+                                .collection('users')
+                                .doc(user.uid)
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              if (!snapshot.hasData) {
+                                return const CircularProgressIndicator();
+                              }
 
-                            final data = snapshot.data?.data() as Map<String, dynamic>?;
+                              final data =
+                                  snapshot.data?.data() as Map<String, dynamic>?;
 
-                            if (data == null) {
-                              return const Text(
-                                "Profile not found",
-                                style: TextStyle(color: Colors.white),
-                              );
-                            }
+                              if (data == null) {
+                                return const Text(
+                                  "No profile data",
+                                  style: TextStyle(color: Colors.white),
+                                );
+                              }
 
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  data['name'] ?? '',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 30,
-                                    fontWeight: FontWeight.bold,
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    data['name'] ?? '',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  data['email'] ?? '',
-                                  style: const TextStyle(
-                                    color: Colors.white38,
-                                    fontSize: 14,
-                ),
-              ),
-            ],
+
+                                  const SizedBox(height: 6),
+
+                                  Text(
+                                    data['email'] ?? '',
+                                    style: const TextStyle(
+                                      color: Colors.white38,
+                                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              );
+            },
           );
         },
-      );
-    },
-  ),
+      ),
+    ),
+  ],
 ),
 
               const SizedBox(height: 35),
