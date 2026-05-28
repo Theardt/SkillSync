@@ -102,6 +102,13 @@ class _DashboardScreenState extends State<DashboardScreen>
                         if (snapshot.hasData && snapshot.data!.exists) {
                           final data =
                               snapshot.data!.data() as Map<String, dynamic>;
+                          if (!data.containsKey('xp')) {
+                            //init XP for existing users - they do not have xp field in firestore
+                            FirebaseFirestore.instance
+                                .collection('users')
+                                .doc(currentUser.uid)
+                                .update({'xp': 0});
+                          }
                           displayName = data['name'] ?? userName;
                           xp = data['xp'] ?? 0;
                           //streak = data['streak'] ?? 1;
