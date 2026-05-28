@@ -11,11 +11,12 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  final _nameController = TextEditingController(text: "De Bruyn");
-  final _emailController = TextEditingController(text: "debruyn95@skillsync.com");
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
 
   bool _isSaving = false;
 
+  @override
   void initState() {
     super.initState();
     _loadProfile(); 
