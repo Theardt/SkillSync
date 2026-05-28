@@ -18,11 +18,26 @@ class AuthenticationCubit extends Cubit<MasterState<AuthenticationState>> {
     monitorAuthState();
   }
 
-  void monitorAuthState() {
+void monitorAuthState() {
     _authStateSubscription =
-        _firebaseAuth.authStateChanges().listen((fb_auth.User? user) {
+        _firebaseAuth.authStateChanges().listen((fb_auth.User? user) async {
       if (user != null) {
         emit(Loaded(state.main.copyWith(isAuthenticated: true)));
+
+        try {
+          // Catch all logged-in users and ensure they have a baseline streak field
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .set({
+            'currentStreak': 1,
+          }, SetOptions(merge: true));
+        } catch (e) {
+          if (kDebugMode) {
+            print("Error initializing streak for session: $e");
+          }
+        }
+
       } else {
         emit(Loaded(
             state.main.copyWith(isAuthenticated: false, authToken: null)));
@@ -34,27 +49,25 @@ class AuthenticationCubit extends Cubit<MasterState<AuthenticationState>> {
     emit(const Initial(AuthenticationState()));
   }
 
-  Future<void> signInWithEmail(String email, String password) async {
-    //   emit(Loading(state.main));
-    //   try {
-    //     await _firebaseAuth.signInWithEmailAndPassword(
-    //       email: email.trim(),
-    //       password: password.trim(),
-    //     );
-    //   } on fb_auth.FirebaseAuthException catch (e) {
-    //     emit(Error(state.main,
-    //         message: e.message ?? "An error occurred during sign in."));
-    //   } catch (e) {
-    //     emit(Error(state.main, message: "An unexpected error occurred."));
-    //   }
-    // }\
+Future<void> signInWithEmail(String email, String password) async {
     emit(Loading(state.main));
     try {
       final userCredential = await _firebaseAuth.signInWithEmailAndPassword(
         email: email.trim(),
         password: password.trim(),
       );
-      if (userCredential.user != null) {
+      final user = userCredential.user;
+
+      if (user != null) {
+        // Enforce that older users get the streak field if it's missing on login
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .set({
+          'currentStreak': 1,
+          'updatedAt': FieldValue.serverTimestamp(),
+        }, SetOptions(merge: true));
+
         emit(Loaded(state.main.copyWith(isAuthenticated: true)));
       }
     } on fb_auth.FirebaseAuthException catch (e) {
@@ -112,6 +125,8 @@ class AuthenticationCubit extends Cubit<MasterState<AuthenticationState>> {
         'name': fullName,
         'email': email.trim(),
         'createdAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+        'currentStreak': 1, // <-- Initializes the streak counter here
       });
 
       emit(Loaded(state.main.copyWith(isAuthenticated: true)));
