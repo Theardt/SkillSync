@@ -45,30 +45,33 @@ class ProfileScreen extends StatelessWidget {
                           }
 
                           return StreamBuilder<DocumentSnapshot>(
-                            stream: FirebaseFirestore.instance
-                                .collection('users')
-                                .doc(user.uid)
-                                .snapshots(),
-                            builder: (context, snapshot) {
-                              if (!snapshot.hasData) {
-                                return const CircularProgressIndicator();
-                              }
+                          stream: FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(user.uid)
+                              .snapshots(),
+                          builder: (context, snapshot) {
 
-                              final data =
-                                  snapshot.data?.data() as Map<String, dynamic>?;
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const CircularProgressIndicator();
+                            }
 
-                              if (data == null) {
-                                return const Text(
-                                  "No profile data",
-                                  style: TextStyle(color: Colors.white),
-                                );
-                              }
+                            if (snapshot.hasError) {
+                              return const Text(
+                                "Error loading profile",
+                                style: TextStyle(color: Colors.red),
+                              );
+                            }
 
+                            if (!snapshot.hasData ||
+                                !snapshot.data!.exists) {
                               return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                                crossAxisAlignment:
+                                    CrossAxisAlignment.start,
                                 children: [
+
                                   Text(
-                                    data['name'] ?? '',
+                                    user.displayName ?? 'No Name',
                                     style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 30,
@@ -79,21 +82,51 @@ class ProfileScreen extends StatelessWidget {
                                   const SizedBox(height: 6),
 
                                   Text(
-                                    data['email'] ?? '',
+                                    user.email ?? '',
                                     style: const TextStyle(
                                       color: Colors.white38,
                                       fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }
+
+                            final data = snapshot.data!.data()
+                                as Map<String, dynamic>;
+
+                            return Column(
+                              crossAxisAlignment:
+                                  CrossAxisAlignment.start,
+                              children: [
+
+                                Text(
+                                  data['name'] ?? 'No Name',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+
+                                const SizedBox(height: 6),
+
+                                Text(
+                                  data['email'] ?? '',
+                                  style: const TextStyle(
+                                    color: Colors.white38,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
                     ),
                   ),
                 ],
-              );
-            },
-          );
-        },
-      ),
-    ),
-  ],
-),
+              ),
 
               const SizedBox(height: 35),
 

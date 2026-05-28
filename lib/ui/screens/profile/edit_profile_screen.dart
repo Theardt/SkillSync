@@ -23,22 +23,39 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
 Future<void> _loadProfile() async {
-    final user = FirebaseAuth.instance.currentUser;
+  final user = FirebaseAuth.instance.currentUser;
 
-    if (user == null) return;
+  if (user == null) return;
 
-    final doc = await FirebaseFirestore.instance
+  final doc = await FirebaseFirestore.instance
+      .collection('users')
+      .doc(user.uid)
+      .get();
+
+  if (!doc.exists) {
+
+    await FirebaseFirestore.instance
         .collection('users')
         .doc(user.uid)
-        .get();
+        .set({
+      'name': user.displayName ?? '',
+      'email': user.email ?? '',
+      'createdAt': FieldValue.serverTimestamp(),
+    });
 
-    final data = doc.data();
+    _nameController.text = user.displayName ?? '';
+    _emailController.text = user.email ?? '';
 
-    if (data != null && mounted) {
-      _nameController.text = data['name'] ?? '';
-      _emailController.text = data['email'] ?? '';
-    }
+    return;
   }
+
+  final data = doc.data();
+
+  if (data != null && mounted) {
+    _nameController.text = data['name'] ?? '';
+    _emailController.text = data['email'] ?? '';
+  }
+}
 
   @override
   void dispose() {
