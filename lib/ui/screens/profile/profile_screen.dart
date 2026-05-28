@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../../../constants/app_colors.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -22,53 +23,106 @@ class ProfileScreen extends StatelessWidget {
 
               /// HEADER
               Row(
-                children: [
-                  CircleAvatar(
-                    radius: isMobile ? 40 : 50,
-                    backgroundColor: Colors.blue,
-                    child: Icon(
-                      Icons.person,
-                      color: Colors.white,
-                      size: isMobile ? 40 : 50,
+                  children: [
+                    CircleAvatar(
+                      radius: 40,
+                      backgroundColor: Colors.blue,
+                      child: const Icon(Icons.person, color: Colors.white, size: 40),
                     ),
-                  ),
 
-                  const SizedBox(width: 20),
+                    const SizedBox(width: 20),
 
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                    Expanded(
+                      child: Builder(
+                        builder: (context) {
+                          final user = FirebaseAuth.instance.currentUser;
 
-                        Text(
-                          "De Bruyn",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                          if (user == null) {
+                            return const Text(
+                              "Not logged in",
+                              style: TextStyle(color: Colors.white),
+                            );
+                          }
 
-                        SizedBox(height: 6),
+                          return StreamBuilder<DocumentSnapshot>(
+                          stream: FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(user.uid)
+                              .snapshots(),
+                          builder: (context, snapshot) {
 
-                        Text(
-                          "Level 12 Learner 🚀",
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 16,
-                          ),
-                        ),
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const CircularProgressIndicator();
+                            }
 
-                        SizedBox(height: 6),
+                            if (snapshot.hasError) {
+                              return const Text(
+                                "Error loading profile",
+                                style: TextStyle(color: Colors.red),
+                              );
+                            }
 
-                        Text(
-                          "debruyn95@skillsync.com",
-                          style: TextStyle(
-                            color: Colors.white38,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
+                            if (!snapshot.hasData ||
+                                !snapshot.data!.exists) {
+                              return Column(
+                                crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                children: [
+
+                                  Text(
+                                    user.displayName ?? 'No Name',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+
+                                  const SizedBox(height: 6),
+
+                                  Text(
+                                    user.email ?? '',
+                                    style: const TextStyle(
+                                      color: Colors.white38,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }
+
+                            final data = 
+                            snapshot.data?.data() as Map<String, dynamic>? ?? {};
+                            
+                            return Column(
+                              crossAxisAlignment:
+                                  CrossAxisAlignment.start,
+                              children: [
+
+                                Text(
+                                  data['name'] ?? 'No Name',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+
+                                const SizedBox(height: 6),
+
+                                Text(
+                                  data['email'] ?? '',
+                                  style: const TextStyle(
+                                    color: Colors.white38,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
                     ),
                   ),
                 ],
