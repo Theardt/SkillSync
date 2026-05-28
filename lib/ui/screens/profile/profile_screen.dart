@@ -92,9 +92,9 @@ class ProfileScreen extends StatelessWidget {
                               );
                             }
 
-                            final data = snapshot.data!.data()
-                                as Map<String, dynamic>;
-
+                            final data = 
+                            snapshot.data?.data() as Map<String, dynamic>? ?? {};
+                            
                             return Column(
                               crossAxisAlignment:
                                   CrossAxisAlignment.start,
