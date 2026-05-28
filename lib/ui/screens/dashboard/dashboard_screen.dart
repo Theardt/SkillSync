@@ -20,6 +20,8 @@ class _DashboardScreenState extends State<DashboardScreen>
   int hoveredCardIndex = -1;
   int hoveredCourseIndex = -1;
 
+  int liveStreakCount = 0;
+
   @override
   void initState() {
     super.initState();
@@ -296,72 +298,98 @@ class _DashboardScreenState extends State<DashboardScreen>
                               const SizedBox(height: 30),
 
                               /// DAILY STREAK
-                              Container(
-                                width: double.infinity,
-                                padding: const EdgeInsets.all(20),
-                                decoration: BoxDecoration(
-                                  color: AppColors.card,
-                                  borderRadius: BorderRadius.circular(18),
-                                ),
-                                child: isMobile
-                                    ? Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: const [
-                                          Icon(
-                                            Icons.local_fire_department,
-                                            color: Colors.orange,
-                                            size: 45,
-                                          ),
-                                          SizedBox(height: 15),
-                                          Text(
-                                            "Daily Streak",
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          SizedBox(height: 5),
-                                          Text(
-                                            "7 days in a row 🔥",
-                                            style: TextStyle(
-                                              color: Colors.white70,
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    : Row(
-                                        children: const [
-                                          Icon(
-                                            Icons.local_fire_department,
-                                            color: Colors.orange,
-                                            size: 45,
-                                          ),
-                                          SizedBox(width: 20),
-                                          Column(
+                              StreamBuilder<DocumentSnapshot>(
+                                stream: currentUser != null
+                                    ? FirebaseFirestore.instance
+                                        .collection('users')
+                                        .doc(currentUser.uid)
+                                        .snapshots()
+                                    : null,
+                                builder: (context, snapshot) {
+                                  int streakCount =
+                                      0; // Changed to int for consistency
+
+                                  // Check if data is available and extract streak safely
+                                  if (snapshot.hasData &&
+                                      snapshot.data!.exists) {
+                                    final data = snapshot.data!.data()
+                                            as Map<String, dynamic>? ??
+                                        {};
+                                    // CHANGED: Matches 'currentStreak' from profile screen and expects an int
+                                    streakCount = data['currentStreak'] ?? 0;
+
+                                    WidgetsBinding.instance
+                                        .addPostFrameCallback((_) {
+                                      if (mounted &&
+                                          liveStreakCount != streakCount) {
+                                        setState(() {
+                                          liveStreakCount = streakCount;
+                                        });
+                                      }
+                                    });
+                                  }
+
+                                  return Container(
+                                    width: double.infinity,
+                                    padding: const EdgeInsets.all(20),
+                                    // ... [rest of your container decoration remains the same]
+                                    child: isMobile
+                                        ? Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Text(
+                                              const Icon(
+                                                  Icons.local_fire_department,
+                                                  color: Colors.orange,
+                                                  size: 45),
+                                              const SizedBox(height: 15),
+                                              const Text(
                                                 "Daily Streak",
                                                 style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
+                                                    color: Colors.white,
+                                                    fontSize: 18,
+                                                    fontWeight:
+                                                        FontWeight.bold),
                                               ),
-                                              SizedBox(height: 5),
+                                              const SizedBox(height: 5),
                                               Text(
-                                                "7 days in a row 🔥",
-                                                style: TextStyle(
-                                                  color: Colors.white70,
-                                                ),
+                                                "$streakCount days in a row 🔥", // Injected the int seamlessly
+                                                style: const TextStyle(
+                                                    color: Colors.white70),
+                                              ),
+                                            ],
+                                          )
+                                        : Row(
+                                            children: [
+                                              const Icon(
+                                                  Icons.local_fire_department,
+                                                  color: Colors.orange,
+                                                  size: 45),
+                                              const SizedBox(width: 20),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  const Text(
+                                                    "Daily Streak",
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  const SizedBox(height: 5),
+                                                  Text(
+                                                    "$streakCount days in a row 🔥", // Injected the int seamlessly
+                                                    style: const TextStyle(
+                                                        color: Colors.white70),
+                                                  ),
+                                                ],
                                               ),
                                             ],
                                           ),
-                                        ],
-                                      ),
+                                  );
+                                },
                               ),
                               const SizedBox(height: 30),
 
@@ -437,9 +465,13 @@ class _DashboardScreenState extends State<DashboardScreen>
                                 icon: Icons.local_fire_department,
                                 iconColor: Colors.red,
                                 title: "Daily Streak Updated",
-                                subtitle: "7 day learning streak maintained",
+                                subtitle: liveStreakCount > 0
+                                    ? "$liveStreakCount day learning streak maintained"
+                                    : "Start your learning streak today!",
                                 time: "Today",
                               ),
+
+                              const SizedBox(height: 15),
 
                               const SizedBox(height: 15),
 
