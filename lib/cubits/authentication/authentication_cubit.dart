@@ -41,6 +41,19 @@ class AuthenticationCubit extends Cubit<MasterState<AuthenticationState>> {
     //       email: email.trim(),
     //       password: password.trim(),
     //     );
+    // final user = userCredential.user;
+
+    //   if (user != null) {
+    //     // Enforce that older users get the streak field if it's missing on login
+    //     await FirebaseFirestore.instance
+    //         .collection('users')
+    //         .doc(user.uid)
+    //         .set({
+    //       'currentStreak': 1,
+    //       'updatedAt': FieldValue.serverTimestamp(),
+    //     }, SetOptions(merge: true));
+
+    //     emit(Loaded(state.main.copyWith(isAuthenticated: true)));
     //   } on fb_auth.FirebaseAuthException catch (e) {
     //     emit(Error(state.main,
     //         message: e.message ?? "An error occurred during sign in."));
@@ -112,6 +125,8 @@ class AuthenticationCubit extends Cubit<MasterState<AuthenticationState>> {
         'name': fullName,
         'email': email.trim(),
         'createdAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+        'currentStreak': 1, // <-- Initializes the streak counter here
       });
 
       emit(Loaded(state.main.copyWith(isAuthenticated: true)));
