@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:skillsync/helpers/level_calculator.dart';
 import '../../../constants/app_colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -9,8 +10,8 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-
     final isMobile = screenWidth < 700;
+    final currentUser = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -20,37 +21,34 @@ class ProfileScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               /// HEADER
               Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 40,
-                      backgroundColor: Colors.blue,
-                      child: const Icon(Icons.person, color: Colors.white, size: 40),
-                    ),
+                children: [
+                  CircleAvatar(
+                    radius: 40,
+                    backgroundColor: Colors.blue,
+                    child:
+                        const Icon(Icons.person, color: Colors.white, size: 40),
+                  ),
+                  const SizedBox(width: 20),
+                  Expanded(
+                    child: Builder(
+                      builder: (context) {
+                        final user = FirebaseAuth.instance.currentUser;
 
-                    const SizedBox(width: 20),
+                        if (user == null) {
+                          return const Text(
+                            "Not logged in",
+                            style: TextStyle(color: Colors.white),
+                          );
+                        }
 
-                    Expanded(
-                      child: Builder(
-                        builder: (context) {
-                          final user = FirebaseAuth.instance.currentUser;
-
-                          if (user == null) {
-                            return const Text(
-                              "Not logged in",
-                              style: TextStyle(color: Colors.white),
-                            );
-                          }
-
-                          return StreamBuilder<DocumentSnapshot>(
+                        return StreamBuilder<DocumentSnapshot>(
                           stream: FirebaseFirestore.instance
                               .collection('users')
                               .doc(user.uid)
                               .snapshots(),
                           builder: (context, snapshot) {
-
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
                               return const CircularProgressIndicator();
@@ -63,13 +61,10 @@ class ProfileScreen extends StatelessWidget {
                               );
                             }
 
-                            if (!snapshot.hasData ||
-                                !snapshot.data!.exists) {
+                            if (!snapshot.hasData || !snapshot.data!.exists) {
                               return Column(
-                                crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-
                                   Text(
                                     user.displayName ?? 'No Name',
                                     style: const TextStyle(
@@ -78,9 +73,7 @@ class ProfileScreen extends StatelessWidget {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-
                                   const SizedBox(height: 6),
-
                                   Text(
                                     user.email ?? '',
                                     style: const TextStyle(
@@ -92,14 +85,17 @@ class ProfileScreen extends StatelessWidget {
                               );
                             }
 
-                            final data = 
-                            snapshot.data?.data() as Map<String, dynamic>? ?? {};
-                            
-                            return Column(
-                              crossAxisAlignment:
-                                  CrossAxisAlignment.start,
-                              children: [
+                            final data = snapshot.data?.data()
+                                    as Map<String, dynamic>? ??
+                                {};
 
+                            final xp = data['xp'] ?? 0;
+                            final levelData = LevelCalculator.calculate(xp);
+                            final level = levelData.level;
+
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
                                 Text(
                                   data['name'] ?? 'No Name',
                                   style: const TextStyle(
@@ -108,9 +104,16 @@ class ProfileScreen extends StatelessWidget {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-
                                 const SizedBox(height: 6),
-
+                                //dynamic level in header
+                                Text(
+                                  "Level $level Learner 🚀",
+                                  style: const TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
                                 Text(
                                   data['email'] ?? '',
                                   style: const TextStyle(
@@ -130,67 +133,84 @@ class ProfileScreen extends StatelessWidget {
 
               const SizedBox(height: 35),
 
-              /// XP CARD
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      AppColors.primaryBlue,
-                      AppColors.darkBlue,
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+              /// XP CARD (now dynamic)
+              StreamBuilder<DocumentSnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(currentUser?.uid ?? '')
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  int xp = 0;
+                  if (snapshot.hasData && snapshot.data!.exists) {
+                    final data = snapshot.data!.data() as Map<String, dynamic>;
+                    xp = data['xp'] ?? 0;
+                  }
+                  //level calc
+                  final levelData = LevelCalculator.calculate(xp);
+                  int level = levelData.level;
+                  double progress = levelData.progress;
+                  int xpRemaining = levelData.xpRemaining;
 
-                    const Text(
-                      "Current XP",
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 16,
+                  return Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          AppColors.primaryBlue,
+                          AppColors.darkBlue,
+                        ],
                       ),
-                    ),
-
-                    const SizedBox(height: 12),
-
-                    const Text(
-                      "2,450 XP",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 34,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-
-                    const SizedBox(height: 12),
-
-                    ClipRRect(
                       borderRadius: BorderRadius.circular(20),
-                      child: LinearProgressIndicator(
-                        value: 0.78,
-                        minHeight: 12,
-                        backgroundColor: Colors.white24,
-                        color: Colors.white,
-                      ),
                     ),
-
-                    const SizedBox(height: 10),
-
-                    const Text(
-                      "780 XP until Level 13",
-                      style: TextStyle(
-                        color: Colors.white70,
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Current XP",
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        //dynamic XP score
+                        Text(
+                          "${xp.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')} XP",
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 34,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: TweenAnimationBuilder<double>(
+                              tween: Tween<double>(begin: 0.0, end: progress),
+                              duration: const Duration(milliseconds: 800),
+                              curve: Curves.easeOutCubic,
+                              builder: (context, val, child) {
+                                return LinearProgressIndicator(
+                                  value: val,
+                                  minHeight: 12,
+                                  backgroundColor: Colors.white24,
+                                  color: Colors.white,
+                                );
+                              },
+                            )),
+                        const SizedBox(height: 10),
+                        Text(
+                          "$xpRemaining XP until Level ${level + 1}",
+                          style: const TextStyle(
+                            color: Colors.white70,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  );
+                },
               ),
-
-              const SizedBox(height: 35),
 
               /// STATS TITLE
               const Text(
@@ -213,28 +233,24 @@ class ProfileScreen extends StatelessWidget {
                 mainAxisSpacing: 16,
                 childAspectRatio: 1.0,
                 children: const [
-
                   ProfileStatCard(
                     icon: Icons.menu_book,
                     value: "12",
                     label: "Courses",
                     color: Colors.blue,
                   ),
-
                   ProfileStatCard(
                     icon: Icons.emoji_events,
                     value: "8",
                     label: "Badges",
                     color: Colors.orange,
                   ),
-
                   ProfileStatCard(
                     icon: Icons.access_time,
                     value: "14h",
                     label: "Study Time",
                     color: Colors.green,
                   ),
-
                   ProfileStatCard(
                     icon: Icons.local_fire_department,
                     value: "7",
@@ -262,25 +278,21 @@ class ProfileScreen extends StatelessWidget {
                 spacing: 16,
                 runSpacing: 16,
                 children: const [
-
                   AchievementBadge(
                     title: "Flutter Beginner",
                     icon: Icons.code,
                     color: Colors.blue,
                   ),
-
                   AchievementBadge(
                     title: "Quiz Master",
                     icon: Icons.quiz,
                     color: Colors.orange,
                   ),
-
                   AchievementBadge(
                     title: "7 Day Streak",
                     icon: Icons.local_fire_department,
                     color: Colors.red,
                   ),
-
                   AchievementBadge(
                     title: "Fast Learner",
                     icon: Icons.bolt,
@@ -294,7 +306,6 @@ class ProfileScreen extends StatelessWidget {
               /// ACTION BUTTONS
               Column(
                 children: [
-
                   buildActionButton(
                     icon: Icons.edit,
                     title: "Edit Profile",
@@ -302,9 +313,7 @@ class ProfileScreen extends StatelessWidget {
                       Navigator.pushNamed(context, '/edit_profile');
                     },
                   ),
-
                   const SizedBox(height: 15),
-
                   buildActionButton(
                     icon: Icons.settings,
                     title: "Settings",
@@ -312,15 +321,12 @@ class ProfileScreen extends StatelessWidget {
                       // TODO: Add Settings navigation
                     },
                   ),
-
                   const SizedBox(height: 15),
-
                   buildActionButton(
                     icon: Icons.logout,
                     title: "Logout",
                     color: Colors.red,
                     onTap: () async {
-
                       print("LOGOUT BUTTON PRESSED");
 
                       await FirebaseAuth.instance.signOut();
@@ -363,16 +369,12 @@ class ProfileScreen extends StatelessWidget {
           ),
           child: Row(
             children: [
-
               const SizedBox(width: 20),
-
               Icon(
                 icon,
                 color: color,
               ),
-
               const SizedBox(width: 20),
-
               Text(
                 title,
                 style: const TextStyle(
@@ -414,15 +416,12 @@ class ProfileStatCard extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-
           Icon(
             icon,
             color: color,
             size: 36,
           ),
-
           const SizedBox(height: 12),
-
           Text(
             value,
             style: const TextStyle(
@@ -431,9 +430,7 @@ class ProfileStatCard extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-
           const SizedBox(height: 5),
-
           Text(
             label,
             style: const TextStyle(
@@ -472,14 +469,11 @@ class AchievementBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-
           Icon(
             icon,
             color: color,
           ),
-
           const SizedBox(width: 10),
-
           Text(
             title,
             style: const TextStyle(
