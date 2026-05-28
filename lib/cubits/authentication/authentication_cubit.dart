@@ -109,12 +109,11 @@ class AuthenticationCubit extends Cubit<MasterState<AuthenticationState>> {
   }
 
   Future<void> signUpWithEmail(
-    String email, String password, String fullName) async {
+      String email, String password, String fullName) async {
     emit(Loading(state.main));
 
     try {
-      final userCredential =
-          await _firebaseAuth.createUserWithEmailAndPassword(
+      final userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email.trim(),
         password: password.trim(),
       );
@@ -129,12 +128,11 @@ class AuthenticationCubit extends Cubit<MasterState<AuthenticationState>> {
       await user.updateDisplayName(fullName);
 
       // CREATE Firestore user profile
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .set({
+      await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
         'name': fullName,
         'email': email.trim(),
+        'xp': 0,
+        //'streak' : 1,
         'createdAt': FieldValue.serverTimestamp(),
       });
 
