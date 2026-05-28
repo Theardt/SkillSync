@@ -19,6 +19,8 @@ class _DashboardScreenState extends State<DashboardScreen>
   int hoveredCardIndex = -1;
   int hoveredCourseIndex = -1;
 
+  int liveStreakCount = 0;
+
   @override
   void initState() {
     super.initState();
@@ -268,7 +270,15 @@ class _DashboardScreenState extends State<DashboardScreen>
                               final data = snapshot.data!.data() as Map<String, dynamic>? ?? {};
                               // CHANGED: Matches 'currentStreak' from profile screen and expects an int
                               streakCount = data['currentStreak'] ?? 0; 
-                            }
+
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                                    if (mounted && liveStreakCount != streakCount) {
+                                      setState(() {
+                                        liveStreakCount = streakCount;
+                                      });
+                                    }
+                                  });
+                                }
 
                             return Container(
                               width: double.infinity,
@@ -385,12 +395,16 @@ class _DashboardScreenState extends State<DashboardScreen>
                     const SizedBox(height: 15),
 
                     buildActivityCard(
-                      icon: Icons.local_fire_department,
-                      iconColor: Colors.red,
-                      title: "Daily Streak Updated",
-                      subtitle: "7 day learning streak maintained",
-                      time: "Today",
-                    ),
+                                icon: Icons.local_fire_department,
+                                iconColor: Colors.red,
+                                title: "Daily Streak Updated",
+                                subtitle: liveStreakCount > 0 
+                                    ? "$liveStreakCount day learning streak maintained"
+                                    : "Start your learning streak today!",
+                                time: "Today",
+                              ),
+
+                              const SizedBox(height: 15),
 
                     const SizedBox(height: 15),
 
