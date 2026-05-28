@@ -6,6 +6,7 @@ import 'package:skillsync/barrel_file.dart';
 import 'package:skillsync/models/authentication_jwt_model.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 part 'authentication_state.dart';
 
@@ -84,15 +85,36 @@ class AuthenticationCubit extends Cubit<MasterState<AuthenticationState>> {
   }
 
   Future<void> signUpWithEmail(
-      String email, String password, String fullName) async {
+    String email, String password, String fullName) async {
     emit(Loading(state.main));
+
     try {
-      final userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
-          email: email.trim(), password: password.trim());
-      if (userCredential.user != null) {
-        await userCredential.user!.updateDisplayName(fullName);
-        emit(Loaded(state.main.copyWith(isAuthenticated: true)));
+      final userCredential =
+          await _firebaseAuth.createUserWithEmailAndPassword(
+        email: email.trim(),
+        password: password.trim(),
+      );
+
+      final user = userCredential.user;
+
+      if (user == null) {
+        throw Exception("User creation failed");
       }
+
+      // Firebase Auth display name
+      await user.updateDisplayName(fullName);
+
+      // CREATE Firestore user profile
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .set({
+        'name': fullName,
+        'email': email.trim(),
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+
+      emit(Loaded(state.main.copyWith(isAuthenticated: true)));
     } on fb_auth.FirebaseAuthException catch (e) {
       emit(Error(state.main,
           message: e.message ?? "An error occurred during registration."));
