@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../constants/app_colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -252,52 +253,41 @@ class _DashboardScreenState extends State<DashboardScreen>
                     const SizedBox(height: 30),
 
                     /// DAILY STREAK
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: AppColors.card,
-                        borderRadius: BorderRadius.circular(18),
-                      ),
-                      child: isMobile
-                          ? Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
-                                Icon(
-                                  Icons.local_fire_department,
-                                  color: Colors.orange,
-                                  size: 45,
-                                ),
-                                SizedBox(height: 15),
-                                Text(
-                                  "Daily Streak",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                SizedBox(height: 5),
-                                Text(
-                                  "7 days in a row 🔥",
-                                  style: TextStyle(
-                                    color: Colors.white70,
-                                  ),
-                                ),
-                              ],
-                            )
-                          : Row(
-                              children: const [
-                                Icon(
-                                  Icons.local_fire_department,
-                                  color: Colors.orange,
-                                  size: 45,
-                                ),
-                                SizedBox(width: 20),
-                                Column(
+                    StreamBuilder<DocumentSnapshot>(
+                      stream: currentUser != null
+                          ? FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(currentUser.uid)
+                              .snapshots()
+                          : null,
+                      builder: (context, snapshot) {
+                        String streakDisplay = "0";
+
+                        // Check if data is available and extract streak string safely
+                        if (snapshot.hasData && snapshot.data!.exists) {
+                          final data = snapshot.data!.data() as Map<String, dynamic>? ?? {};
+                          // Fallback to "0" if 'streak' field doesn't exist or is null
+                          streakDisplay = (data['streak'] ?? "0").toString();
+                        }
+
+                        return Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: AppColors.card,
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                          child: isMobile
+                              ? Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
+                                    const Icon(
+                                      Icons.local_fire_department,
+                                      color: Colors.orange,
+                                      size: 45,
+                                    ),
+                                    const SizedBox(height: 15),
+                                    const Text(
                                       "Daily Streak",
                                       style: TextStyle(
                                         color: Colors.white,
@@ -305,17 +295,47 @@ class _DashboardScreenState extends State<DashboardScreen>
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                    SizedBox(height: 5),
+                                    const SizedBox(height: 5),
                                     Text(
-                                      "7 days in a row 🔥",
-                                      style: TextStyle(
+                                      "$streakDisplay days in a row 🔥", // CHANGES HERE: Dynamically inserted streak value
+                                      style: const TextStyle(
                                         color: Colors.white70,
                                       ),
                                     ),
                                   ],
+                                )
+                              : Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.local_fire_department,
+                                      color: Colors.orange,
+                                      size: 45,
+                                    ),
+                                    const SizedBox(width: 20),
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        const Text(
+                                          "Daily Streak",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 5),
+                                        Text(
+                                          "$streakDisplay days in a row 🔥", // CHANGES HERE: Dynamically inserted streak value
+                                          style: const TextStyle(
+                                            color: Colors.white70,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
+                        );
+                      },
                     ),
                     const SizedBox(height: 30),
 
