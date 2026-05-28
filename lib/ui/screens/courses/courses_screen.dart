@@ -19,7 +19,7 @@ class CoursesScreen extends StatelessWidget {
               const Text(
                 "Courses",
                 style: TextStyle(
-                  color: Colors.purple,
+                  color: Colors.blue,
                   fontSize: 36,
                   fontWeight: FontWeight.bold,
                 ),
@@ -84,7 +84,7 @@ class CoursesScreen extends StatelessWidget {
                             color: const Color(0xFF11162A),
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
-                              color: Colors.purple,
+                              color: Colors.blue,
                               width: 2.5,
                             ),
                           ),
@@ -93,7 +93,7 @@ class CoursesScreen extends StatelessWidget {
                               courseName,
                               textAlign: TextAlign.center,
                               style: const TextStyle(
-                                color: Colors.purple,
+                                color: Colors.white,
                                 fontSize: 22,
                                 fontWeight: FontWeight.bold,
                               ),
