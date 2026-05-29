@@ -16,20 +16,23 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  
   await DependencyInjection.init();
   
  // CONTROLLED SEEDING (safe toggle)
-  const bool shouldSeedFirestore = false;
 
+bool shouldSeedFirestore = false;
+
+  // ignore: dead_code
   if (shouldSeedFirestore) {
     try {
       await seedFirestore();
-      print("Firestore seeded successfully");
+      debugPrint("Firestore seeded successfully");
     } catch (e) {
-      print("Seed error: $e");
+      debugPrint("Seed error: $e");
     }
-  } else {
-    print("Firestore seeding skipped");
+  }else {
+    debugPrint("Firestore seeding skipped");
   }
 
   runApp(const SkillSyncApp());
