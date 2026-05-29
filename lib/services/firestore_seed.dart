@@ -475,11 +475,13 @@ Future<void> seedFirestore() async {
   addCollection("QuestionOptions", questionOptions, "optionID");
   addCollection("Users", users, "userID");
 
+  for (var topic in pythonCurriculumData) {
+    final docRef = firestore.collection('curriculum_topics').doc(); // Auto-generates unique ID
+    batch.set(docRef, topic.toMap());
+  }
+
+  // Push everything to Firestore inside a single atomic write transaction
   await batch.commit();
 
-  // Seed curriculum topics using the service class
-  final service = FirestoreService();
-  await service.seedDatabase(pythonCurriculumData);
-
-  print("Firestore seeded successfully!");
+  print("Firestore data & course contents seeded successfully!");
 }
