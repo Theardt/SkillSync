@@ -17,6 +17,7 @@ class _CoursesScreenState extends State<CoursesScreen>
   @override
   void initState() {
     super.initState();
+    
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
@@ -61,12 +62,12 @@ class _CoursesScreenState extends State<CoursesScreen>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                   
+                  /// HEADER (Styled exactly like your Welcome Sub-headers)
                   Text(
                     "Available Courses",
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: titleSize + 6, // 
+                      fontSize: titleSize + 6, 
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -82,7 +83,7 @@ class _CoursesScreenState extends State<CoursesScreen>
                         if (snapshot.connectionState == ConnectionState.waiting) {
                           return const Center(
                             child: CircularProgressIndicator(
-                              color: AppColors.primaryBlue, // 
+                              color: AppColors.primaryBlue, // No more random purple
                             ),
                           );
                         }
@@ -115,7 +116,7 @@ class _CoursesScreenState extends State<CoursesScreen>
                             final title = courseData['title'] ?? 'Untitled Course';
                             final description = courseData['description'] ?? 'No description available.';
 
-                            // Course card container designed like your progress cards
+                            
                             return Container(
                               margin: const EdgeInsets.only(bottom: 16),
                               width: double.infinity,
