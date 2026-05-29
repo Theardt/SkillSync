@@ -27,6 +27,7 @@ class FirestoreService {
     
     await batch.commit();
   }
+}
 
 Future<void> seedFirestore() async {
   final achievements = [
@@ -84,8 +85,7 @@ Future<void> seedFirestore() async {
     {
       "courseID": "CRS001",
       "createdDate": "2026-01-01",
-      "description":
-          "Learn basic computer literacy and digital skills.",
+      "description": "Learn basic computer literacy and digital skills.",
       "instructorID": "USR003",
       "isDeleted": false,
       "title": "Computer skills",
@@ -93,8 +93,7 @@ Future<void> seedFirestore() async {
     {
       "courseID": "CRS002",
       "createdDate": "2026-01-02",
-      "description":
-          "Introduction to programming concepts and logic.",
+      "description": "Introduction to programming concepts and logic.",
       "instructorID": "USR003",
       "isDeleted": false,
       "title": "Introduction to programming",
@@ -102,8 +101,7 @@ Future<void> seedFirestore() async {
     {
       "courseID": "CRS003",
       "createdDate": "2026-01-03",
-      "description":
-          "Learn procedural programming fundamentals.",
+      "description": "Learn procedural programming fundamentals.",
       "instructorID": "USR003",
       "isDeleted": false,
       "title": "Procedural programming",
@@ -111,8 +109,7 @@ Future<void> seedFirestore() async {
     {
       "courseID": "CRS004",
       "createdDate": "2026-01-04",
-      "description":
-          "Learn object-oriented programming using C#.",
+      "description": "Learn object-oriented programming using C#.",
       "instructorID": "USR004",
       "isDeleted": false,
       "title": "C# Programming",
@@ -120,8 +117,7 @@ Future<void> seedFirestore() async {
     {
       "courseID": "CRS005",
       "createdDate": "2026-01-05",
-      "description":
-          "Comprehensive Java programming course.",
+      "description": "Comprehensive Java programming course.",
       "instructorID": "USR004",
       "isDeleted": false,
       "title": "Java Programming",
@@ -129,8 +125,7 @@ Future<void> seedFirestore() async {
     {
       "courseID": "CRS006",
       "createdDate": "2026-01-06",
-      "description":
-          "Learn Python programming from beginner to advanced.",
+      "description": "Learn Python programming from beginner to advanced.",
       "instructorID": "USR004",
       "isDeleted": false,
       "title": "Python Programming",
@@ -138,8 +133,7 @@ Future<void> seedFirestore() async {
     {
       "courseID": "CRS007",
       "createdDate": "2026-01-07",
-      "description":
-          "Introduction to database concepts and SQL.",
+      "description": "Introduction to database concepts and SQL.",
       "instructorID": "USR003",
       "isDeleted": false,
       "title": "Database Management",
@@ -165,8 +159,7 @@ Future<void> seedFirestore() async {
 
   final feedback = [
     {
-      "comments":
-          "Very informative and beginner friendly.",
+      "comments": "Very informative and beginner friendly.",
       "dateSubmitted": "2026-03-10",
       "difficultyFeedback": "Easy",
       "feedbackID": "FDB001",
@@ -175,8 +168,7 @@ Future<void> seedFirestore() async {
       "userID": "USR001",
     },
     {
-      "comments":
-          "Good explanations but needs more examples.",
+      "comments": "Good explanations but needs more examples.",
       "dateSubmitted": "2026-03-12",
       "difficultyFeedback": "Medium",
       "feedbackID": "FDB002",
@@ -250,21 +242,17 @@ Future<void> seedFirestore() async {
   final quizQuestions = [
     {
       "assessmentID": "ASM001",
-      "explanation":
-          "A computer processes and stores information.",
+      "explanation": "A computer processes and stores information.",
       "isDeleted": false,
       "questionID": "QST001",
-      "questionText":
-          "What is the primary function of a computer?",
+      "questionText": "What is the primary function of a computer?",
     },
     {
       "assessmentID": "ASM002",
-      "explanation":
-          "Variables are used to store data.",
+      "explanation": "Variables are used to store data.",
       "isDeleted": false,
       "questionID": "QST002",
-      "questionText":
-          "What is a variable in programming?",
+      "questionText": "What is a variable in programming?",
     },
   ];
 
@@ -284,8 +272,7 @@ Future<void> seedFirestore() async {
     {
       "isCorrect": true,
       "optionID": "OPT003",
-      "optionText":
-          "A storage location for data",
+      "optionText": "A storage location for data",
       "questionID": "QST002",
     },
     {
@@ -339,7 +326,7 @@ Future<void> seedFirestore() async {
     },
   ];
 
-final List<TopicModel> pythonCurriculumData = [
+  final List<TopicModel> pythonCurriculumData = [
     // MODULE 1
     TopicModel(
       moduleTitle: "Module 1: Introduction to Python",
@@ -475,36 +462,24 @@ final List<TopicModel> pythonCurriculumData = [
     }
   }
 
-  addCollection(
-      "Achievements", achievements, "achievementID");
-  addCollection(
-      "AssessmentAttempts",
-      assessmentAttempts,
-      "attemptID");
-  addCollection(
-      "Assessments", assessments, "assessmentID");
+  addCollection("Achievements", achievements, "achievementID");
+  addCollection("AssessmentAttempts", assessmentAttempts, "attemptID");
+  addCollection("Assessments", assessments, "assessmentID");
   addCollection("Courses", courses, "courseID");
-  addCollection(
-      "Enrollment", enrollments, "enrollmentID");
+  addCollection("Enrollment", enrollments, "enrollmentID");
   addCollection("Feedback", feedback, "feedbackID");
   addCollection("Modules", modules, "moduleID");
-  addCollection(
-      "ModuleSections",
-      moduleSections,
-      "sectionID");
+  addCollection("ModuleSections", moduleSections, "sectionID");
   addCollection("Progress", progress, "progressID");
-  addCollection(
-      "QuizQuestions",
-      quizQuestions,
-      "questionID");
-  addCollection(
-      "QuestionOptions",
-      questionOptions,
-      "optionID");
+  addCollection("QuizQuestions", quizQuestions, "questionID");
+  addCollection("QuestionOptions", questionOptions, "optionID");
   addCollection("Users", users, "userID");
 
   await batch.commit();
 
+  // Seed curriculum topics using the service class
+  final service = FirestoreService();
+  await service.seedDatabase(pythonCurriculumData);
+
   print("Firestore seeded successfully!");
-}
 }

@@ -16,21 +16,24 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  
   await DependencyInjection.init();
   
  // CONTROLLED SEEDING (safe toggle)
-  const bool shouldSeedFirestore = false;
 
-  // if (shouldSeedFirestore) {
-  //   try {
-  //     await seedFirestore();
-  //     print("Firestore seeded successfully");
-  //   } catch (e) {
-  //     print("Seed error: $e");
-  //   }
-  // } else {
-  //   print("Firestore seeding skipped");
-  // }
+bool shouldSeedFirestore = false;
+
+  // ignore: dead_code
+  if (shouldSeedFirestore) {
+    try {
+      await seedFirestore();
+      debugPrint("Firestore seeded successfully");
+    } catch (e) {
+      debugPrint("Seed error: $e");
+    }
+  } else {
+    debugPrint("Firestore seeding skipped");
+  }
 
   runApp(const SkillSyncApp());
 }
