@@ -3,7 +3,7 @@ import 'package:skillsync/models/topic_model.dart';
 
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
-  final String _collectionPath = 'curriculum_topics';
+  final String _collectionPath = 'curriculum_topics_python';
 
   // Fetch all curriculum topics ordered by module title
   Stream<List<TopicModel>> streamCurriculum() {
@@ -476,7 +476,7 @@ Future<void> seedFirestore() async {
   addCollection("Users", users, "userID");
 
   for (var topic in pythonCurriculumData) {
-    final docRef = firestore.collection('curriculum_topics').doc(); // Auto-generates unique ID
+    final docRef = firestore.collection('curriculum_topics_python').doc(); // Auto-generates unique ID
     batch.set(docRef, topic.toMap());
   }
 
