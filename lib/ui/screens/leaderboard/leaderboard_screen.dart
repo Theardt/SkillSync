@@ -76,7 +76,7 @@ class LeaderboardScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   const Text(
-                    "Top learners competing this week 🚀",
+                    "Top learners competing this week",
                     style: TextStyle(
                       color: Colors.white70,
                       fontSize: 16,

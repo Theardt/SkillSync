@@ -46,6 +46,6 @@ flutter:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/png/school_icon (2).png"
-  adaptive_icon_background: "#020B3A" # Matches your dark blue app theme background!
-  adaptive_icon_foreground: "assets/png/school_icon (2)FG.png"
+  image_path: "assets/png/SS_Icon_WApp_T_500px_padded.png"
+  adaptive_icon_background: "#020B3A" # Matches dark blue app theme
+  adaptive_icon_foreground: "assets/png/SS_Icon_WApp_T_500px_padded.png"
