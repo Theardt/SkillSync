@@ -21,16 +21,16 @@ void main() async {
  // CONTROLLED SEEDING (safe toggle)
   const bool shouldSeedFirestore = false;
 
-  if (shouldSeedFirestore) {
-    try {
-      await seedFirestore();
-      print("Firestore seeded successfully");
-    } catch (e) {
-      print("Seed error: $e");
-    }
-  } else {
-    print("Firestore seeding skipped");
-  }
+  // if (shouldSeedFirestore) {
+  //   try {
+  //     await seedFirestore();
+  //     print("Firestore seeded successfully");
+  //   } catch (e) {
+  //     print("Seed error: $e");
+  //   }
+  // } else {
+  //   print("Firestore seeding skipped");
+  // }
 
   runApp(const SkillSyncApp());
 }

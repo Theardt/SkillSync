@@ -1,4 +1,32 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:skillsync/models/topic_model.dart';
+
+class FirestoreService {
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final String _collectionPath = 'curriculum_topics';
+
+  // Fetch all curriculum topics ordered by module title
+  Stream<List<TopicModel>> streamCurriculum() {
+    return _db
+        .collection(_collectionPath)
+        .orderBy('moduleTitle') 
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((doc) => TopicModel.fromMap(doc.data(), doc.id))
+            .toList());
+  }
+
+  // Helper function to seed/upload your dataset to Firestore initially
+  Future<void> seedDatabase(List<TopicModel> topics) async {
+    final batch = _db.batch();
+    
+    for (var topic in topics) {
+      final docRef = _db.collection(_collectionPath).doc();
+      batch.set(docRef, topic.toMap());
+    }
+    
+    await batch.commit();
+  }
 
 Future<void> seedFirestore() async {
   final achievements = [
@@ -311,6 +339,125 @@ Future<void> seedFirestore() async {
     },
   ];
 
+final List<TopicModel> pythonCurriculumData = [
+    // MODULE 1
+    TopicModel(
+      moduleTitle: "Module 1: Introduction to Python",
+      topicTitle: "What is Python & Why Learn It?",
+      content: "Python is a high-level programming language designed to be easy to read and understand. It allows developers to create applications quickly with simple and clean code. It features easy syntax for beginners, is used worldwide, and is great for automation.",
+    ),
+    TopicModel(
+      moduleTitle: "Module 1: Introduction to Python",
+      topicTitle: "Installing Python & Setup",
+      content: "Before writing code, you need to install Python on your computer. Steps include downloading Python from the official website, installing it, and setting up a code editor such as VS Code.",
+      activity: "Install Python and create a folder named: MyPythonProjects",
+    ),
+    TopicModel(
+      moduleTitle: "Module 1: Introduction to Python",
+      topicTitle: "Writing Your First Program",
+      content: "Every programmer starts with a simple program. The print() function displays information on the screen.",
+      codeExample: 'print("Hello, World!")',
+      activity: "Write a program that prints your name and favourite hobby.",
+    ),
+    TopicModel(
+      moduleTitle: "Module 1: Introduction to Python",
+      topicTitle: "Understanding Python Syntax",
+      content: "Syntax refers to the rules used when writing Python code. Important rules: Python uses indentation, code is case-sensitive, and proper spacing improves readability.",
+      codeExample: 'name = "Kabelo"\nprint(name)',
+    ),
+    // MODULE 2
+    TopicModel(
+      moduleTitle: "Module 2: Variables & Data Types",
+      topicTitle: "Variables and Naming Conventions",
+      content: "Variables are used to store information in a program. Naming rules: Use meaningful names, avoid spaces, and use lowercase where possible.",
+      codeExample: 'name = "Lerato"\nage = 21',
+    ),
+    TopicModel(
+      moduleTitle: "Module 2: Variables & Data Types",
+      topicTitle: "Data Types",
+      content: "Python supports different types of data. Common Data Types include: Integer (Whole numbers), Float (Decimal numbers), String (Text), and Boolean (True or False).",
+      codeExample: 'age = 20\nheight = 1.75\nname = "Sam"\nisStudent = True',
+    ),
+    TopicModel(
+      moduleTitle: "Module 2: Variables & Data Types",
+      topicTitle: "User Input and Output",
+      content: "Programs can interact with users using input expressions.",
+      codeExample: 'name = input("Enter your name: ")\nprint("Welcome", name)',
+      activity: "Create a program that asks the user for their age.",
+    ),
+    TopicModel(
+      moduleTitle: "Module 2: Variables & Data Types",
+      topicTitle: "Basic Operators",
+      content: "Operators perform calculations in Python. Examples: + (Addition), - (Subtraction), * (Multiplication), / (Division).",
+      codeExample: 'num1 = 10\nnum2 = 5\nprint(num1 + num2)',
+    ),
+    // MODULE 3
+    TopicModel(
+      moduleTitle: "Module 3: Conditions",
+      topicTitle: "If Statements",
+      content: "Conditions allow programs to make decisions based on logical limits.",
+      codeExample: 'age = 18\nif age >= 18:\n    print("You may enter")',
+    ),
+    TopicModel(
+      moduleTitle: "Module 3: Conditions",
+      topicTitle: "If-Else Statements",
+      content: "Programs can perform different actions based on changing conditions.",
+      codeExample: 'marks = 45\nif marks >= 50:\n    print("Pass")\nelse:\n    print("Fail")',
+    ),
+    TopicModel(
+      moduleTitle: "Module 3: Conditions",
+      topicTitle: "Comparison & Logical Operators",
+      content: "Comparison Operators are used to compare values (==, !=, >, <). Logical operators combine conditions (and, or, not).",
+      activity: "Create a login system that checks username and password.",
+    ),
+    // MODULE 4
+    TopicModel(
+      moduleTitle: "Module 4: Loops",
+      topicTitle: "For Loops",
+      content: "For loops repeat code a specific number of times.",
+      codeExample: 'for i in range(5):\n    print(i)',
+    ),
+    TopicModel(
+      moduleTitle: "Module 4: Loops",
+      topicTitle: "While Loops",
+      content: "While loops run continuously as long as a condition evaluates to true.",
+      codeExample: 'count = 1\nwhile count <= 5:\n    print(count)\n    count += 1',
+    ),
+    TopicModel(
+      moduleTitle: "Module 4: Loops",
+      topicTitle: "Loop Control Statements",
+      content: "Alter default loop execution patterns using keywords: break, continue, and pass.",
+      activity: "Create a multiplication table using loops.",
+    ),
+    // MODULE 5
+    TopicModel(
+      moduleTitle: "Module 5: Functions",
+      topicTitle: "Creating & Parameterizing Functions",
+      content: "Functions help organize reusable code block environments. Functions save time, reduce repetition in programs, and can dynamically receive information via arguments.",
+      codeExample: 'def greet(name):\n    print("Hello", name)',
+    ),
+    TopicModel(
+      moduleTitle: "Module 5: Functions",
+      topicTitle: "Return Values",
+      content: "Functions process input operational procedures and return evaluated programmatic values back to their caller source blocks.",
+      codeExample: 'def add(a, b):\n    return a + b',
+      activity: "Mini Project: Build a calculator using functions.",
+    ),
+    // MODULE 6
+    TopicModel(
+      moduleTitle: "Module 6: Object-Oriented Programming",
+      topicTitle: "Classes, Objects & Attributes",
+      content: "Classes act as architectural blueprints used to synthesize objects. Objects contain specialized local data contexts (attributes) and structural interactions (methods).",
+      codeExample: 'class Student:\n    def __init__(self, name):\n        self.name = name\n    def display(self):\n        print(self.name)',
+    ),
+    TopicModel(
+      moduleTitle: "Module 6: Object-Oriented Programming",
+      topicTitle: "Constructors & Encapsulation",
+      content: "Constructors initialize objects automatically upon declaration (__init__). Encapsulation protects private internal data inside a class wrapper to improve system security, organize parameters, and block unintended edits.",
+      codeExample: 'def __init__(self):\n    pass',
+    ),
+  ];
+  
   final firestore = FirebaseFirestore.instance;
   final batch = firestore.batch();
 
@@ -359,4 +506,5 @@ Future<void> seedFirestore() async {
   await batch.commit();
 
   print("Firestore seeded successfully!");
+}
 }
