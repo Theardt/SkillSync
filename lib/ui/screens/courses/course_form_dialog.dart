@@ -11,179 +11,195 @@ Future<bool> showCourseFormDialog({
   required CourseRepository repository,
   CourseRecord? course,
 }) async {
-  final isEditing = course != null;
-  final formKey = GlobalKey<FormState>();
-  final titleController = TextEditingController(text: course?.title ?? '');
-  final descriptionController = TextEditingController(
-    text: course?.description ?? '',
-  );
-  final overviewController =
-      TextEditingController(text: course?.overview ?? '');
-  final outcomesController = TextEditingController(
-    text: course?.outcomes.join('\n') ?? '',
-  );
-  final instructorController = TextEditingController(
-    text: course?.instructorID == 'No instructor' ? '' : course?.instructorID,
-  );
-
   final didSave = await showDialog<bool>(
     context: context,
     barrierDismissible: false,
-    builder: (dialogContext) {
-      var isSaving = false;
-
-      return StatefulBuilder(
-        builder: (context, setDialogState) {
-          return AlertDialog(
-            backgroundColor: AppColors.card,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
-              side: BorderSide(
-                color: AppColors.primaryBlue.withValues(alpha: 0.3),
-              ),
-            ),
-            title: Row(
-              children: [
-                Icon(
-                  isEditing
-                      ? Icons.edit_rounded
-                      : Icons.add_circle_outline_rounded,
-                  color: AppColors.primaryBlue,
-                ),
-                const SizedBox(width: 10),
-                Text(
-                  isEditing ? 'Edit Course' : 'Add Course',
-                  style: const TextStyle(color: Colors.white),
-                ),
-              ],
-            ),
-            content: SizedBox(
-              width: min(MediaQuery.of(context).size.width - 48, 460),
-              child: SingleChildScrollView(
-                child: Form(
-                  key: formKey,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      _CourseTextField(
-                        controller: titleController,
-                        enabled: !isSaving,
-                        label: 'Title',
-                        icon: Icons.menu_book_rounded,
-                        validatorText: 'Enter a course title',
-                      ),
-                      const SizedBox(height: 14),
-                      _CourseTextField(
-                        controller: descriptionController,
-                        enabled: !isSaving,
-                        label: 'Short Description',
-                        icon: Icons.notes_rounded,
-                        minLines: 2,
-                        maxLines: 4,
-                        validatorText: 'Enter a course description',
-                      ),
-                      const SizedBox(height: 14),
-                      _CourseTextField(
-                        controller: overviewController,
-                        enabled: !isSaving,
-                        label: 'Course Overview',
-                        icon: Icons.article_rounded,
-                        minLines: 3,
-                        maxLines: 5,
-                      ),
-                      const SizedBox(height: 14),
-                      _CourseTextField(
-                        controller: outcomesController,
-                        enabled: !isSaving,
-                        label: 'Module Outcomes',
-                        icon: Icons.check_circle_outline_rounded,
-                        minLines: 3,
-                        maxLines: 5,
-                      ),
-                      const SizedBox(height: 14),
-                      _CourseTextField(
-                        controller: instructorController,
-                        enabled: !isSaving,
-                        label: 'Instructor ID',
-                        icon: Icons.person_rounded,
-                        validatorText: 'Enter an instructor ID',
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed:
-                    isSaving ? null : () => Navigator.of(dialogContext).pop(),
-                child: const Text('Cancel'),
-              ),
-              ElevatedButton.icon(
-                onPressed: isSaving
-                    ? null
-                    : () async {
-                        if (!formKey.currentState!.validate()) return;
-                        setDialogState(() => isSaving = true);
-
-                        try {
-                          await repository.saveCourse(
-                            CourseFormData(
-                              title: titleController.text.trim(),
-                              description: descriptionController.text.trim(),
-                              overview: overviewController.text.trim(),
-                              outcomes: splitMultiline(
-                                outcomesController.text,
-                              ),
-                              instructorID: instructorController.text.trim(),
-                            ),
-                            existingCourse: course,
-                          );
-
-                          if (dialogContext.mounted) {
-                            Navigator.of(dialogContext).pop(true);
-                          }
-                        } catch (_) {
-                          setDialogState(() => isSaving = false);
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  'Something went wrong while saving the course',
-                                ),
-                                backgroundColor: AppColors.red,
-                              ),
-                            );
-                          }
-                        }
-                      },
-                icon: isSaving
-                    ? const SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : Icon(isEditing ? Icons.save_rounded : Icons.add),
-                label: Text(isEditing ? 'Save' : 'Add'),
-              ),
-            ],
-          );
-        },
-      );
-    },
+    builder: (_) => _CourseFormDialog(
+      repository: repository,
+      course: course,
+    ),
   );
-
-  titleController.dispose();
-  descriptionController.dispose();
-  overviewController.dispose();
-  outcomesController.dispose();
-  instructorController.dispose();
 
   return didSave == true;
 }
 
+class _CourseFormDialog extends StatefulWidget {
+  final CourseRepository repository;
+  final CourseRecord? course;
+
+  const _CourseFormDialog({
+    required this.repository,
+    this.course,
+  });
+
+  @override
+  State<_CourseFormDialog> createState() => _CourseFormDialogState();
+}
+
+class _CourseFormDialogState extends State<_CourseFormDialog> {
+  final _formKey = GlobalKey<FormState>();
+  late String _title;
+  late String _description;
+  late String _overview;
+  late String _outcomes;
+  late String _instructorID;
+  var _isSaving = false;
+
+  bool get _isEditing => widget.course != null;
+
+  @override
+  void initState() {
+    super.initState();
+    final course = widget.course;
+    _title = course?.title ?? '';
+    _description = course?.description ?? '';
+    _overview = course?.overview ?? '';
+    _outcomes = course?.outcomes.join('\n') ?? '';
+    _instructorID = course?.instructorID == 'No instructor'
+        ? ''
+        : course?.instructorID ?? '';
+  }
+
+  Future<void> _saveCourse() async {
+    if (!_formKey.currentState!.validate()) return;
+    _formKey.currentState!.save();
+
+    setState(() => _isSaving = true);
+
+    try {
+      await widget.repository.saveCourse(
+        CourseFormData(
+          title: _title.trim(),
+          description: _description.trim(),
+          overview: _overview.trim(),
+          outcomes: splitMultiline(_outcomes),
+          instructorID: _instructorID.trim(),
+        ),
+        existingCourse: widget.course,
+      );
+
+      if (!mounted) return;
+      Navigator.of(context).pop(true);
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _isSaving = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Something went wrong while saving the course'),
+          backgroundColor: AppColors.red,
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      backgroundColor: AppColors.card,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(18),
+        side: BorderSide(
+          color: AppColors.primaryBlue.withValues(alpha: 0.3),
+        ),
+      ),
+      title: Row(
+        children: [
+          Icon(
+            _isEditing ? Icons.edit_rounded : Icons.add_circle_outline_rounded,
+            color: AppColors.primaryBlue,
+          ),
+          const SizedBox(width: 10),
+          Text(
+            _isEditing ? 'Edit Course' : 'Add Course',
+            style: const TextStyle(color: Colors.white),
+          ),
+        ],
+      ),
+      content: SizedBox(
+        width: min(MediaQuery.of(context).size.width - 48, 460),
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _CourseTextField(
+                  initialValue: _title,
+                  onSaved: (value) => _title = value ?? '',
+                  enabled: !_isSaving,
+                  label: 'Title',
+                  icon: Icons.menu_book_rounded,
+                  validatorText: 'Enter a course title',
+                ),
+                const SizedBox(height: 14),
+                _CourseTextField(
+                  initialValue: _description,
+                  onSaved: (value) => _description = value ?? '',
+                  enabled: !_isSaving,
+                  label: 'Short Description',
+                  icon: Icons.notes_rounded,
+                  minLines: 2,
+                  maxLines: 4,
+                  validatorText: 'Enter a course description',
+                ),
+                const SizedBox(height: 14),
+                _CourseTextField(
+                  initialValue: _overview,
+                  onSaved: (value) => _overview = value ?? '',
+                  enabled: !_isSaving,
+                  label: 'Course Overview',
+                  icon: Icons.article_rounded,
+                  minLines: 3,
+                  maxLines: 5,
+                ),
+                const SizedBox(height: 14),
+                _CourseTextField(
+                  initialValue: _outcomes,
+                  onSaved: (value) => _outcomes = value ?? '',
+                  enabled: !_isSaving,
+                  label: 'Module Outcomes',
+                  icon: Icons.check_circle_outline_rounded,
+                  minLines: 3,
+                  maxLines: 5,
+                ),
+                const SizedBox(height: 14),
+                _CourseTextField(
+                  initialValue: _instructorID,
+                  onSaved: (value) => _instructorID = value ?? '',
+                  enabled: !_isSaving,
+                  label: 'Instructor ID',
+                  icon: Icons.person_rounded,
+                  validatorText: 'Enter an instructor ID',
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
+          child: const Text('Cancel'),
+        ),
+        ElevatedButton.icon(
+          onPressed: _isSaving ? null : _saveCourse,
+          icon: _isSaving
+              ? const SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : Icon(_isEditing ? Icons.save_rounded : Icons.add),
+          label: Text(_isEditing ? 'Save' : 'Add'),
+        ),
+      ],
+    );
+  }
+}
+
 class _CourseTextField extends StatelessWidget {
-  final TextEditingController controller;
+  final String initialValue;
+  final FormFieldSetter<String> onSaved;
   final bool enabled;
   final String label;
   final IconData icon;
@@ -192,7 +208,8 @@ class _CourseTextField extends StatelessWidget {
   final String? validatorText;
 
   const _CourseTextField({
-    required this.controller,
+    required this.initialValue,
+    required this.onSaved,
     required this.enabled,
     required this.label,
     required this.icon,
@@ -204,7 +221,8 @@ class _CourseTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      controller: controller,
+      initialValue: initialValue,
+      onSaved: onSaved,
       enabled: enabled,
       minLines: minLines,
       maxLines: maxLines,
