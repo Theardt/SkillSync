@@ -51,6 +51,12 @@ class ProfileScreen extends StatelessWidget {
                   final String name =
                       data['name'] ?? user.displayName ?? 'No Name';
                   final String email = data['email'] ?? user.email ?? '';
+                  //extract xp and calc level
+                  final int xp = data['xp'] ?? 0;
+                  final levelData = LevelCalculator.calculate(xp);
+                  final int level = levelData.level;
+                  final double progress = levelData.progress;
+                  final int xpRemaining = levelData.xpRemaining;
 
                   // CHANGED: Safely pull the current streak value from your database document
                   final int streakCount = data['currentStreak'] ?? 0;
@@ -84,12 +90,22 @@ class ProfileScreen extends StatelessWidget {
                                   ),
                                   const SizedBox(height: 6),
                                   Text(
-                                    email,
+                                    "Level $level! Aim for the stars!",
                                     style: const TextStyle(
                                       color: Colors.white38,
                                       fontSize: 14,
                                     ),
                                   ),
+                                  const SizedBox(
+                                    height: 6,
+                                  ),
+                                  Text(
+                                    email,
+                                    style: const TextStyle(
+                                      color: Colors.white38,
+                                      fontSize: 14,
+                                    ),
+                                  )
                                 ],
                               ),
                             ),
@@ -98,7 +114,7 @@ class ProfileScreen extends StatelessWidget {
 
                         const SizedBox(height: 35),
 
-                        /// XP CARD
+                        /// XP CARD (dynamic & animated)
                         Container(
                           width: double.infinity,
                           padding: const EdgeInsets.all(24),
@@ -122,9 +138,9 @@ class ProfileScreen extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(height: 12),
-                              const Text(
-                                "2,450 XP",
-                                style: TextStyle(
+                              Text(
+                                "${xp.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')} XP",
+                                style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 34,
                                   fontWeight: FontWeight.bold,
@@ -133,19 +149,145 @@ class ProfileScreen extends StatelessWidget {
                               const SizedBox(height: 12),
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(20),
-                                child: const LinearProgressIndicator(
-                                  value: 0.78,
-                                  minHeight: 12,
-                                  backgroundColor: Colors.white24,
-                                  color: Colors.white,
+                                child: TweenAnimationBuilder<double>(
+                                  tween:
+                                      Tween<double>(begin: 0.0, end: progress),
+                                  duration: const Duration(milliseconds: 800),
+                                  curve: Curves.easeOutCubic,
+                                  builder: (context, val, child) {
+                                    return LinearProgressIndicator(
+                                      value: val,
+                                      minHeight: 12,
+                                      backgroundColor: Colors.white24,
+                                      color: Colors.white,
+                                    );
+                                  },
                                 ),
                               ),
                               const SizedBox(height: 10),
-                              const Text(
-                                "780 XP until Level 13",
-                                style: TextStyle(
+                              Text(
+                                "$xpRemaining XP until Level ${level + 1}",
+                                style: const TextStyle(
                                   color: Colors.white70,
                                 ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        /// TESTING CONTROLS (TEMPORARY)
+                        /// //TODO: DELETE TEST XP BUTTONS
+                        const SizedBox(height: 25),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: AppColors.card,
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: Colors.amber.withOpacity(0.3),
+                              width: 1.5,
+                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: const [
+                                  Icon(Icons.bug_report,
+                                      color: Colors.amber, size: 20),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    "Leaderboard Test Controls",
+                                    style: TextStyle(
+                                      color: Colors.amber,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 6),
+                              const Text(
+                                "Simulate earning or losing XP to test live leaderboard rankings and XP progress bar animations.",
+                                style: TextStyle(
+                                  color: Colors.white60,
+                                  fontSize: 12,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: ElevatedButton.icon(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            Colors.red.withOpacity(0.15),
+                                        foregroundColor: Colors.redAccent,
+                                        side: BorderSide(
+                                            color: Colors.red.withOpacity(0.4),
+                                            width: 1.5),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 12),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                      ),
+                                      icon: const Icon(Icons.remove, size: 16),
+                                      label: const Text("-50 XP"),
+                                      onPressed: () async {
+                                        if (user != null) {
+                                          final docRef = FirebaseFirestore
+                                              .instance
+                                              .collection('users')
+                                              .doc(user.uid);
+                                          final doc = await docRef.get();
+                                          final currentXp =
+                                              (doc.data()?['xp'] ?? 0) as int;
+                                          final newXp =
+                                              (currentXp - 50).clamp(0, 999999);
+                                          await docRef.update({'xp': newXp});
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: ElevatedButton.icon(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            Colors.green.withOpacity(0.15),
+                                        foregroundColor: Colors.greenAccent,
+                                        side: BorderSide(
+                                            color:
+                                                Colors.green.withOpacity(0.4),
+                                            width: 1.5),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 12),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                      ),
+                                      icon: const Icon(Icons.add, size: 16),
+                                      label: const Text("+50 XP"),
+                                      onPressed: () async {
+                                        if (user != null) {
+                                          final docRef = FirebaseFirestore
+                                              .instance
+                                              .collection('users')
+                                              .doc(user.uid);
+                                          final doc = await docRef.get();
+                                          final currentXp =
+                                              (doc.data()?['xp'] ?? 0) as int;
+                                          final newXp = currentXp + 50;
+                                          await docRef.update({'xp': newXp});
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),

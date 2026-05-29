@@ -43,6 +43,7 @@ class LeaderboardScreen extends StatelessWidget {
             final leaderboardUsers = docs.map((doc) {
               final data = doc.data() as Map<String, dynamic>;
               final xpVal = data['xp'] ?? 0;
+              final streakVal = data['currentStreak'] ?? 0;
               final levelData = LevelCalculator.calculate(xpVal);
               return {
                 "uid": doc.id,
@@ -50,6 +51,7 @@ class LeaderboardScreen extends StatelessWidget {
                 "xp": "$xpVal XP",
                 "xpNum": xpVal,
                 "level": "Level ${levelData.level}",
+                "streak": streakVal,
               };
             }).toList();
 
@@ -238,16 +240,16 @@ class LeaderboardScreen extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 5),
                                 Row(
-                                  children: const [
-                                    Icon(
+                                  children: [
+                                    const Icon(
                                       Icons.local_fire_department,
                                       color: Colors.orange,
                                       size: 18,
                                     ),
                                     SizedBox(width: 4),
                                     Text(
-                                      "7 Day Streak",
-                                      style: TextStyle(
+                                      "${user["streak"]} Day Streak",
+                                      style: const TextStyle(
                                         color: Colors.white70,
                                         fontSize: 12,
                                       ),

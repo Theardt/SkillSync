@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
 import 'package:flutter/foundation.dart';
@@ -25,16 +26,39 @@ class AuthenticationCubit extends Cubit<MasterState<AuthenticationState>> {
         emit(Loaded(state.main.copyWith(isAuthenticated: true)));
 
         try {
-          // Catch all logged-in users and ensure they have a baseline streak field
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(user.uid)
-              .set({
-            'currentStreak': 1,
-          }, SetOptions(merge: true));
+          final docRef =
+              FirebaseFirestore.instance.collection('users').doc(user.uid);
+          final doc = await docRef.get();
+
+          if (!doc.exists) {
+            //create user doc if no local cache version available
+            await docRef.set({
+              'name': user.displayName ?? 'No Name',
+              'email': user.email ?? '',
+              'xp': 0,
+              'currentStreak': 1,
+              'createdAt': FieldValue.serverTimestamp(),
+              'updatedAt': FieldValue.serverTimestamp(),
+            });
+          } else {
+            //doc on server - compare fields to local and update if missing
+            final data = doc.data() as Map<String, dynamic>? ?? {};
+            final updates = <String, dynamic>{};
+
+            if (!data.containsKey('xp')) {
+              updates['xp'] = 0;
+            }
+            if (!data.containsKey('currentStreak')) {
+              updates['currentStreak'] = 1;
+            }
+            if (updates.isNotEmpty) {
+              await docRef.update(updates);
+            }
+          }
         } catch (e) {
           if (kDebugMode) {
-            print("Error initializing streak for session: $e");
+            print(
+                "Error checking/initializing user doc - monitorAuthState(): $e");
           }
         }
       } else {
@@ -43,6 +67,26 @@ class AuthenticationCubit extends Cubit<MasterState<AuthenticationState>> {
       }
     });
   }
+
+  //         // Catch all logged-in users and ensure they have a baseline streak field
+  //         await FirebaseFirestore.instance
+  //             .collection('users')
+  //             .doc(user.uid)
+  //             .set({
+  //           'currentStreak': 1,
+  //         }, SetOptions(merge: true));
+  //       } catch (e) {
+  //         if (kDebugMode) {
+  //           print("Error initializing streak for session: $e");
+  //         }
+  //       }
+  //     } else {
+  //       emit(Loaded(
+  //           state.main.copyWith(isAuthenticated: false, authToken: null)));
+  //     }
+  //   });
+  //
+//comment^^^^^DO NOT TOUCH :)
 
   void reset() {
     emit(const Initial(AuthenticationState()));
@@ -81,14 +125,18 @@ class AuthenticationCubit extends Cubit<MasterState<AuthenticationState>> {
       final user = userCredential.user;
 
       if (user != null) {
-        // Enforce that older users get the streak field if it's missing on login
-        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
-          'currentStreak': 1,
-          'updatedAt': FieldValue.serverTimestamp(),
-        }, SetOptions(merge: true));
-
         emit(Loaded(state.main.copyWith(isAuthenticated: true)));
       }
+      // if (user != null) {
+      //   // Enforce that older users get the streak field if it's missing on login
+      //   await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+      //     'currentStreak': 1,
+      //     'updatedAt': FieldValue.serverTimestamp(),
+      //   }, SetOptions(merge: true));
+
+      //   emit(Loaded(state.main.copyWith(isAuthenticated: true)));
+      // }
+//TODO: DELETE COMMENT
     } on fb_auth.FirebaseAuthException catch (e) {
       emit(Error(state.main, message: _mapAuthException(e)));
     } catch (e) {
