@@ -21,7 +21,7 @@ void main() async {
   
  // CONTROLLED SEEDING (safe toggle)
 
-bool shouldSeedFirestore = true;
+bool shouldSeedFirestore = false;
 
   // ignore: dead_code
   if (shouldSeedFirestore) {
@@ -31,9 +31,9 @@ bool shouldSeedFirestore = true;
     } catch (e) {
       debugPrint("Seed error: $e");
     }
-  }// else {
-    //debugPrint("Firestore seeding skipped");
-  //}
+  }else {
+    debugPrint("Firestore seeding skipped");
+  }
 
   runApp(const SkillSyncApp());
 }
