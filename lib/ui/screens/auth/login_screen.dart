@@ -13,11 +13,41 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  String? _emailError;
+
+  @override
+  void initState() {
+    super.initState();
+    //listen to keystrokes to determine validity of input
+    _emailController.addListener(_validateEmailRealTime);
+  }
+
   @override
   void dispose() {
+    _emailController.removeListener(_validateEmailRealTime);
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  void _validateEmailRealTime() {
+    final email = _emailController.text;
+    if (email.isEmpty) {
+      setState(() {
+        _emailError = null;
+      });
+    } else {
+      final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+      if (!emailRegex.hasMatch(email.trim())) {
+        setState(() {
+          _emailError = "Please enter a valid email (e.g. name@domain.com)";
+        });
+      } else {
+        setState(() {
+          _emailError = null;
+        });
+      }
+    }
   }
 
   @override
@@ -109,6 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       decoration: InputDecoration(
                         hintText: "Email",
                         hintStyle: const TextStyle(color: Colors.white54),
+                        errorText: _emailError,
                         prefixIcon: const Icon(
                           Icons.email,
                           color: Colors.blue,
@@ -199,10 +230,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 final email = _emailController.text.trim();
                                 final password =
                                     _passwordController.text.trim();
-                                if (email.isNotEmpty && password.isNotEmpty) {
-                                  sl.authenticationCubit
-                                      .signInWithEmail(email, password);
-                                } else {
+                                // final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+                                if (email.isEmpty || password.isEmpty) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                       content:
@@ -210,7 +239,30 @@ class _LoginScreenState extends State<LoginScreen> {
                                       backgroundColor: Colors.orangeAccent,
                                     ),
                                   );
+                                } else if (_emailError != null) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                          "Please correct the errors in the fields above"),
+                                      backgroundColor: Colors.redAccent,
+                                    ),
+                                  );
+                                } else {
+                                  sl.authenticationCubit
+                                      .signInWithEmail(email, password);
                                 }
+                                // if (email.isNotEmpty && password.isNotEmpty) {
+                                // sl.authenticationCubit
+                                //     .signInWithEmail(email, password);
+                                // } else {
+                                //   ScaffoldMessenger.of(context).showSnackBar(
+                                //     const SnackBar(
+                                //       content:
+                                //           Text("Please fill in all fields"),
+                                //       backgroundColor: Colors.orangeAccent,
+                                //     ),
+                                //   );
+                                // }
                                 // Navigator.pushNamed(context, '/navigation');
                               },
                         child: isLoading
