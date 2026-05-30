@@ -410,6 +410,35 @@ class ProfileScreen extends StatelessWidget {
                               },
                             ),
                             const SizedBox(height: 15),
+
+                            const SizedBox(height: 15),
+
+                              buildActionButton(
+                              context: context,
+                              icon: Icons.delete,
+                              title: "Delete Account",
+                              color: Colors.orange,
+                              onTap: () async {
+                              if (user != null) {
+                              await FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(user.uid)
+                              .update({
+                              'isDeleted': true,
+                              });
+
+                              if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                              content: Text('Account marked as deleted'),
+                              ),
+                              );
+                              }
+                              }
+                              },
+                              ),
+
+
                             buildActionButton(
                               context: context,
                               icon: Icons.logout,
